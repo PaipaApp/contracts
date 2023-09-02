@@ -4,18 +4,31 @@ pragma solidity ^0.8.20;
 import {Test} from "forge-std/Test.sol";
 import "forge-std/console.sol";
 import {Pipe} from "../../src/Pipe.sol";
-import {MockContract0, MockContract1} from "../mock/MockContracts.sol";
+import {
+    MockContract0,
+    MockContract1,
+    MockStake,
+    MockToken
+} from "../mock/MockContracts.sol";
 
-contract ContractBTest is Test {
+contract CreatePipeTest is Test {
     uint256 testNumber;
     Pipe public pipe;
     MockContract0 public mock0;
     MockContract1 public mock1;
+    MockStake public mockStake;
+    MockToken public mockToken;
 
     function setUp() public {
-        pipe = new Pipe();
+        pipe = new Pipe(address(this));
+
         mock0 = new MockContract0();
         mock1 = new MockContract1();
+
+        mockToken = new MockToken();
+        mockStake = new MockStake(mockToken);
+
+        mockToken.transfer(address(1), 10e18);
     }
 
     /** 
@@ -32,14 +45,14 @@ contract ContractBTest is Test {
             execution: address(mock0),
             functionSignature: signature0,
             argsType: Pipe.Args.None,
-            fixedArgs: bytes(abi.encode(0))
+            fixedArgs: abi.encode(0)
         });
 
         Pipe.PipeNode memory pipeNode1 = Pipe.PipeNode({
             execution: address(mock1),
             functionSignature: signature1,
             argsType: Pipe.Args.None,
-            fixedArgs: bytes(abi.encode(0))
+            fixedArgs: abi.encode(0)
         });
 
         Pipe.PipeNode[] memory _pipe = new Pipe.PipeNode[](2);
@@ -69,14 +82,14 @@ contract ContractBTest is Test {
             execution: address(mock0),
             functionSignature: signature0,
             argsType: Pipe.Args.None,
-            fixedArgs: bytes(abi.encode(0))
+            fixedArgs: abi.encode(0)
         });
 
         Pipe.PipeNode memory pipeNode1 = Pipe.PipeNode({
             execution: address(mock1),
             functionSignature: signature1,
             argsType: Pipe.Args.None,
-            fixedArgs: bytes(abi.encode(0))
+            fixedArgs: abi.encode(0)
         });
 
         Pipe.PipeNode[] memory _pipe = new Pipe.PipeNode[](2);
@@ -104,7 +117,7 @@ contract ContractBTest is Test {
             execution: address(mock0),
             functionSignature: signature0,
             argsType: Pipe.Args.Static,
-            fixedArgs: bytes(abi.encode(amount))
+            fixedArgs: abi.encode(amount)
         });
 
         Pipe.PipeNode[] memory _pipe = new Pipe.PipeNode[](1);
@@ -130,14 +143,14 @@ contract ContractBTest is Test {
             execution: address(mock1),
             functionSignature: signature0,
             argsType: Pipe.Args.None,
-            fixedArgs: bytes(abi.encodePacked(uint8(0)))
+            fixedArgs: abi.encode(uint8(0))
         });
 
         Pipe.PipeNode memory pipeNode1 = Pipe.PipeNode({
             execution: address(mock0),
             functionSignature: signature1,
             argsType: Pipe.Args.Dynamic,
-            fixedArgs: bytes(abi.encodePacked(uint8(0)))
+            fixedArgs: abi.encode(uint8(0))
         });
 
         Pipe.PipeNode[] memory _pipe = new Pipe.PipeNode[](2);
@@ -151,12 +164,111 @@ contract ContractBTest is Test {
     }
 
     /** 
-     * Scenario: Run pipe nodes passing params from previous function
+     * Scenario: Run pipe nodes where one of the transactions contains a token transfer
      *      Given A transaction that contains token transfer
      *      When The user calls run pipe 
-     *      Then Should run the first function, and use its return value as the input of the next tx
+     *      Then It should execute the transfer between the contracts
      */   
-     function test_RunPipeWithTokenTransfer() public {
+    function test_RunPipeWithTokenTransfer() public {
+        uint256 pipeStakeBalanceBefore = mockStake.balanceOf(address(pipe)); // TODO: Invariant test for depositor
 
-     }
+        // User creates a position in a contract
+        vm.prank(address(1));
+        uint256 depositAmount = mockToken.balanceOf(address(1));
+        mockToken.transfer(address(pipe), depositAmount);
+
+        pipe.runTransaction(
+            address(mockToken),
+            abi.encodeWithSignature("approve(address,uint256)", address(mockStake), 100e18)
+        );
+
+        pipe.runTransaction(
+            address(mockStake),
+            abi.encodeWithSignature('deposit(uint256)', depositAmount)
+        );
+
+        // User Creates a pipeline
+        // collect rewards => check balance => deposit balance into the contract
+        Pipe.PipeNode memory pipeNode0 = Pipe.PipeNode({
+            execution: address(mockStake),
+            functionSignature: "collectRewards()",
+            argsType: Pipe.Args.None,
+            fixedArgs: abi.encode(uint8(0))
+        });
+
+        Pipe.PipeNode memory pipeNode1 = Pipe.PipeNode({
+            execution: address(mockToken),
+            functionSignature: 'balanceOf(address)',
+            argsType: Pipe.Args.Static,
+            fixedArgs: abi.encode(address(pipe))
+        });
+
+        Pipe.PipeNode memory pipeNode2 = Pipe.PipeNode({
+            execution: address(mockStake),
+            functionSignature: 'deposit(uint256)',
+            argsType: Pipe.Args.Dynamic,
+            fixedArgs: abi.encode(uint8(0))
+        });
+
+        Pipe.PipeNode[] memory _pipe = new Pipe.PipeNode[](3);
+        _pipe[0] = pipeNode0;
+        _pipe[1] = pipeNode1;
+        _pipe[2] = pipeNode2;
+
+        pipe.createPipe(_pipe);
+        pipe.runPipe();
+
+        uint256 pipeStakeBalanceAfter = mockStake.balanceOf(address(pipe)) - pipeStakeBalanceBefore;
+
+        assertEq(pipeStakeBalanceAfter, depositAmount + depositAmount * 100 / 10_000);
+    }
+
+    /** 
+     * Scenario: A pipe being ran, but user is not owner of the position
+     *      Given A transaction that contains token transfer
+     *      When The user calls run pipe 
+     *      Then It should revert with PipeNodeError
+     */   
+    function test_RevertPipeWhenContractNotOwner() public {
+        // User creates a position in a contract
+        vm.prank(address(1));
+        uint256 depositAmount = mockToken.balanceOf(address(1));
+        mockToken.approve(address(mockStake), depositAmount);
+        mockStake.deposit(depositAmount);
+
+        // User Creates a pipeline
+        // collect rewards => check balance => deposit balance into the contract
+        Pipe.PipeNode memory pipeNode0 = Pipe.PipeNode({
+            execution: address(mockStake),
+            functionSignature: "collectRewards()",
+            argsType: Pipe.Args.None,
+            fixedArgs: abi.encode(uint8(0))
+        });
+
+        Pipe.PipeNode memory pipeNode1 = Pipe.PipeNode({
+            execution: address(mockToken),
+            functionSignature: 'balanceOf(address)',
+            argsType: Pipe.Args.Static,
+            fixedArgs: abi.encode(uint8(0))
+        });
+
+        Pipe.PipeNode memory pipeNode2 = Pipe.PipeNode({
+            execution: address(mockStake),
+            functionSignature: 'deposit(uint256)',
+            argsType: Pipe.Args.Static,
+            fixedArgs: abi.encode(uint8(0))
+        });
+
+        Pipe.PipeNode[] memory _pipe = new Pipe.PipeNode[](3);
+        _pipe[0] = pipeNode0;
+        _pipe[1] = pipeNode1;
+        _pipe[2] = pipeNode2;
+
+        pipe.createPipe(_pipe);
+
+        vm.expectRevert(Pipe.PipeNodeError.selector);
+        pipe.runPipe();
+    }
+
+    function test_RunPipeWithPayableFunction() public {}
 }
