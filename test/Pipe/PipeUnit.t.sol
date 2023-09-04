@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
@@ -11,7 +11,7 @@ import {
     MockToken
 } from "../mock/MockContracts.sol";
 
-contract CreatePipeTest is Test {
+contract PipeUnitTest is Test {
     uint256 testNumber;
     Pipe public pipe;
     MockContract0 public mock0;
@@ -20,7 +20,7 @@ contract CreatePipeTest is Test {
     MockToken public mockToken;
 
     function setUp() public {
-        pipe = new Pipe(address(this));
+        pipe = new Pipe(address(this), 0);
 
         mock0 = new MockContract0();
         mock1 = new MockContract1();
@@ -42,14 +42,14 @@ contract CreatePipeTest is Test {
         string memory signature1 = 'toggleLock()';
 
         Pipe.PipeNode memory pipeNode0 = Pipe.PipeNode({
-            execution: address(mock0),
+            target: address(mock0),
             functionSignature: signature0,
             argsType: Pipe.Args.None,
             fixedArgs: abi.encode(0)
         });
 
         Pipe.PipeNode memory pipeNode1 = Pipe.PipeNode({
-            execution: address(mock1),
+            target: address(mock1),
             functionSignature: signature1,
             argsType: Pipe.Args.None,
             fixedArgs: abi.encode(0)
@@ -61,11 +61,68 @@ contract CreatePipeTest is Test {
 
         pipe.createPipe(_pipe);
 
-        assertEq(address(mock0), pipe.getPipe()[0].execution);
+        assertEq(address(mock0), pipe.getPipe()[0].target);
         assertEq(signature0, pipe.getPipe()[0].functionSignature);
 
-        assertEq(address(mock1), pipe.getPipe()[1].execution);
+        assertEq(address(mock1), pipe.getPipe()[1].target);
         assertEq(signature1, pipe.getPipe()[1].functionSignature);
+    }
+
+    /** 
+     * Scenario: Override pipe with new nodes
+     *      Given A Pipe with pipe nodes initialized
+     *      When A user calls the create function
+     *      Then Should override the current pipe with new nodes
+     */   
+    function test_OverridePipe() public {
+        string memory signature0 = 'count()';
+        string memory signature1 = 'toggleLock()';
+
+        Pipe.PipeNode memory pipeNode0 = Pipe.PipeNode({
+            target: address(mock0),
+            functionSignature: signature0,
+            argsType: Pipe.Args.None,
+            fixedArgs: abi.encode(0)
+        });
+
+        Pipe.PipeNode memory pipeNode1 = Pipe.PipeNode({
+            target: address(mock1),
+            functionSignature: signature1,
+            argsType: Pipe.Args.None,
+            fixedArgs: abi.encode(0)
+        });
+
+        Pipe.PipeNode[] memory _pipe = new Pipe.PipeNode[](1);
+        _pipe[0] = pipeNode0;
+
+        pipe.createPipe(_pipe);
+
+        _pipe[0] = pipeNode1;
+        pipe.createPipe(_pipe);
+
+        assertEq(pipe.getPipe().length, 1);
+        assertEq(address(mock1), pipe.getPipe()[0].target);
+        assertEq(signature1, pipe.getPipe()[0].functionSignature);
+    }
+
+    /** 
+     * Scenario: Revert creation if target is zero address
+     *      Given A pipe with target address equals to zero
+     *      Then The transaction should revert with invalid target
+     */   
+    function test_RevertOnCreationWhenInvalidTarget() public {
+        Pipe.PipeNode memory pipeNode0 = Pipe.PipeNode({
+            target: address(mock0),
+            functionSignature: 'count()',
+            argsType: Pipe.Args.None,
+            fixedArgs: abi.encode(0)
+        });
+
+        Pipe.PipeNode[] memory _pipe = new Pipe.PipeNode[](1);
+        _pipe[0] = pipeNode0;
+
+        vm.expectRevert(Pipe.InvalidTarget.selector);
+        pipe.createPipe(_pipe);
     }
 
     /** 
@@ -79,14 +136,14 @@ contract CreatePipeTest is Test {
         string memory signature1 = 'toggleLock()';
 
         Pipe.PipeNode memory pipeNode0 = Pipe.PipeNode({
-            execution: address(mock0),
+            target: address(mock0),
             functionSignature: signature0,
             argsType: Pipe.Args.None,
             fixedArgs: abi.encode(0)
         });
 
         Pipe.PipeNode memory pipeNode1 = Pipe.PipeNode({
-            execution: address(mock1),
+            target: address(mock1),
             functionSignature: signature1,
             argsType: Pipe.Args.None,
             fixedArgs: abi.encode(0)
@@ -114,7 +171,7 @@ contract CreatePipeTest is Test {
         uint amount = 10;
 
         Pipe.PipeNode memory pipeNode0 = Pipe.PipeNode({
-            execution: address(mock0),
+            target: address(mock0),
             functionSignature: signature0,
             argsType: Pipe.Args.Static,
             fixedArgs: abi.encode(amount)
@@ -140,14 +197,14 @@ contract CreatePipeTest is Test {
         string memory signature1 = "increment(uint256)";
 
         Pipe.PipeNode memory pipeNode0 = Pipe.PipeNode({
-            execution: address(mock1),
+            target: address(mock1),
             functionSignature: signature0,
             argsType: Pipe.Args.None,
             fixedArgs: abi.encode(uint8(0))
         });
 
         Pipe.PipeNode memory pipeNode1 = Pipe.PipeNode({
-            execution: address(mock0),
+            target: address(mock0),
             functionSignature: signature1,
             argsType: Pipe.Args.Dynamic,
             fixedArgs: abi.encode(uint8(0))
@@ -190,21 +247,21 @@ contract CreatePipeTest is Test {
         // User Creates a pipeline
         // collect rewards => check balance => deposit balance into the contract
         Pipe.PipeNode memory pipeNode0 = Pipe.PipeNode({
-            execution: address(mockStake),
+            target: address(mockStake),
             functionSignature: "collectRewards()",
             argsType: Pipe.Args.None,
             fixedArgs: abi.encode(uint8(0))
         });
 
         Pipe.PipeNode memory pipeNode1 = Pipe.PipeNode({
-            execution: address(mockToken),
+            target: address(mockToken),
             functionSignature: 'balanceOf(address)',
             argsType: Pipe.Args.Static,
             fixedArgs: abi.encode(address(pipe))
         });
 
         Pipe.PipeNode memory pipeNode2 = Pipe.PipeNode({
-            execution: address(mockStake),
+            target: address(mockStake),
             functionSignature: 'deposit(uint256)',
             argsType: Pipe.Args.Dynamic,
             fixedArgs: abi.encode(uint8(0))
@@ -239,21 +296,21 @@ contract CreatePipeTest is Test {
         // User Creates a pipeline
         // collect rewards => check balance => deposit balance into the contract
         Pipe.PipeNode memory pipeNode0 = Pipe.PipeNode({
-            execution: address(mockStake),
+            target: address(mockStake),
             functionSignature: "collectRewards()",
             argsType: Pipe.Args.None,
             fixedArgs: abi.encode(uint8(0))
         });
 
         Pipe.PipeNode memory pipeNode1 = Pipe.PipeNode({
-            execution: address(mockToken),
+            target: address(mockToken),
             functionSignature: 'balanceOf(address)',
             argsType: Pipe.Args.Static,
             fixedArgs: abi.encode(uint8(0))
         });
 
         Pipe.PipeNode memory pipeNode2 = Pipe.PipeNode({
-            execution: address(mockStake),
+            target: address(mockStake),
             functionSignature: 'deposit(uint256)',
             argsType: Pipe.Args.Static,
             fixedArgs: abi.encode(uint8(0))
@@ -267,6 +324,32 @@ contract CreatePipeTest is Test {
         pipe.createPipe(_pipe);
 
         vm.expectRevert(Pipe.PipeNodeError.selector);
+        pipe.runPipe();
+    }
+
+    /** 
+     * Scenario: A pipe being ran before execution interval
+     *      Given A pipe contract that defines an execution interval greater than zero
+     *      When The user calls run pipe twice in a row
+     *      Then It should revert with ExecutionBeforeInterval
+     */   
+    function test_RevertIfPipeExecutedBeforeInterval() public {
+        pipe.setExecutionInterval(1 days);
+
+        Pipe.PipeNode memory pipeNode0 = Pipe.PipeNode({
+            target: address(mockToken),
+            functionSignature: 'balanceOf(address)',
+            argsType: Pipe.Args.Static,
+            fixedArgs: abi.encode(address(pipe))
+        });
+
+        Pipe.PipeNode[] memory _pipe = new Pipe.PipeNode[](1);
+        _pipe[0] = pipeNode0;
+
+        pipe.createPipe(_pipe);
+        pipe.runPipe();
+
+        vm.expectRevert(Pipe.ExecutionBeforeInterval.selector);
         pipe.runPipe();
     }
 
