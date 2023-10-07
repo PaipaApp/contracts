@@ -10,6 +10,7 @@ import {Pausable} from "openzeppelin-contracts/contracts/security/Pausable.sol";
 
 // TODO: how reentrancy can affect execution
 
+// TODO: how to work with ERC721 and ERC1155 approvals
 // @dev this contract doesn't support ERC1155 transactions nor payable transactions
 contract Pipe is Ownable, Pausable {
     using SafeERC20 for IERC20;
@@ -87,6 +88,9 @@ contract Pipe is Ownable, Pausable {
         bytes memory encodedSignature = abi.encodeWithSignature(pipeNode.functionSignature);
 
         bytes memory data = pipeNode.argsType == Args.Static
+            // TODO: is kinda risky to let the front end to deal with creating the fixed args
+            // since the code can be updated and contain bugs. Wouldn't be better if this stays inside
+            // the contract?
             ? bytes.concat(encodedSignature, pipeNode.fixedArgs)
             : encodedSignature;
 
