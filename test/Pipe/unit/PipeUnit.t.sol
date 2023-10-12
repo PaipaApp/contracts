@@ -1,136 +1,155 @@
+//
+//       ███████████             ███                     
+//      ░░███░░░░░███           ░░░                      
+//       ░███    ░███  ██████   ████  ████████   ██████  
+//       ░██████████  ░░░░░███ ░░███ ░░███░░███ ░░░░░███ 
+//       ░███░░░░░░    ███████  ░███  ░███ ░███  ███████ 
+//       ░███         ███░░███  ░███  ░███ ░███ ███░░███ 
+//       █████       ░░████████ █████ ░███████ ░░████████
+//      ░░░░░         ░░░░░░░░ ░░░░░  ░███░░░   ░░░░░░░░ 
+//                                    ░███               
+//                                    █████              
+//                                   ░░░░░         
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
 import "forge-std/console.sol";
-import {Pipe} from "../../src/Pipe.sol";
-import {
-    MockContract0,
-    MockContract1,
-    MockStake,
-    MockToken
-} from "../mock/MockContracts.sol";
+import {Pipe} from "../../../src/Pipe.sol";
+import {PipeFixture} from '../../fixtures/PipeFixture.sol';
 
-contract PipeUnitTest is Test {
-    uint256 testNumber;
-    Pipe public pipe;
-    address public user0;
-    MockContract0 public mock0;
-    MockContract1 public mock1;
-    MockStake public mockStake;
-    MockToken public mockToken;
+contract PipeUnitTest is PipeFixture {
+    Pipe.PipeNode pipeNode0;
+    Pipe.PipeNode pipeNode1;
+    Pipe.PipeNode[] nodes;
+    bool[][] nodeArgsType;
 
-    function setUp() public {
-        user0 = address(1);
+    function setUp() public override {
+        super.setUp();
 
-        pipe = new Pipe(address(this), 0);
-
-        mock0 = new MockContract0();
-        mock1 = new MockContract1();
-
-        mockToken = new MockToken();
-        mockStake = new MockStake(mockToken);
-
-        mockToken.transfer(user0, 10e18);
-    }
-
-    function test_CreatePipeNodes() public {
         // NODE 0
-        string memory node0Signature = 'balanceOf(address)';
         bytes[] memory node0Args = new bytes[](1);
         node0Args[0] = abi.encode(user0);
-
-        // NODE 1
-        string memory node1Signature = 'withdraw(uint256)';
-        bytes[] memory node1Args = new bytes[](1);
-        node1Args[0] = abi.encode(0);
-
-        // INITIALIZE NODE ARGS TYPE
-        bool[][] memory nodeArgsType = new bool[][](2);
-        nodeArgsType[0] = new bool[](1);
-        nodeArgsType[1] = new bool[](1);
-        nodeArgsType[0][0] = false;
-        nodeArgsType[1][0] = true;
-
-        Pipe.PipeNode memory pipeNode0 = Pipe.PipeNode({
+        pipeNode0 = Pipe.PipeNode({
             target: address(mockStake),
-            functionSignature: node0Signature,
+            functionSignature: 'balanceOf(address)',
             args: node0Args
         });
 
-        Pipe.PipeNode memory pipeNode1 = Pipe.PipeNode({
+        // NODE 1
+        bytes[] memory node1Args = new bytes[](1);
+        node1Args[0] = abi.encode(0);
+        pipeNode1 = Pipe.PipeNode({
             target: address(mockStake),
-            functionSignature: node1Signature,
+            functionSignature: 'withdraw(uint256)',
             args: node1Args
         });
 
-        Pipe.PipeNode[] memory pipeNodes = new Pipe.PipeNode[](2);
-        pipeNodes[0] = pipeNode0;
-        pipeNodes[1] = pipeNode1;
-
-        pipe.createPipe(pipeNodes, nodeArgsType);
-
-        Pipe.PipeNode[] memory nodes = pipe.getPipe();
-
-        assertEq(nodes[0].args[0], abi.encode(user0));
-        assertEq(nodes[0].functionSignature, node0Signature);
-        assertEq(nodes[0].target, address(mockStake));
-
-        assertEq(nodes[1].args[0], abi.encode(0));
-        assertEq(nodes[1].functionSignature, node1Signature);
-        assertEq(nodes[1].target, address(mockStake));
-    }
-
-    function test_InitializeBitmapForNodes() public {
-        // NODE 0
-        string memory node0Signature = 'balanceOf(address)';
-        bytes[] memory node0Args = new bytes[](1);
-        node0Args[0] = abi.encode(user0);
-
-        // NODE 1
-        string memory node1Signature = 'withdraw(uint256)';
-        bytes[] memory node1Args = new bytes[](1);
-        node1Args[0] = abi.encode(0);
-
         // INITIALIZE NODE ARGS TYPE
-        bool[][] memory nodeArgsType = new bool[][](2);
+        nodeArgsType = new bool[][](2);
+
         nodeArgsType[0] = new bool[](1);
         nodeArgsType[1] = new bool[](1);
+
         nodeArgsType[0][0] = false;
         nodeArgsType[1][0] = true;
 
-        Pipe.PipeNode memory pipeNode0 = Pipe.PipeNode({
-            target: address(mockStake),
-            functionSignature: node0Signature,
-            args: node0Args
-        });
-
-        Pipe.PipeNode memory pipeNode1 = Pipe.PipeNode({
-            target: address(mockStake),
-            functionSignature: node1Signature,
-            args: node1Args
-        });
-
-        Pipe.PipeNode[] memory pipeNodes = new Pipe.PipeNode[](2);
-        pipeNodes[0] = pipeNode0;
-        pipeNodes[1] = pipeNode1;
-
-        pipe.createPipe(pipeNodes, nodeArgsType);
-
-        assertEq(pipe.argTypeIsDynamic(0, 0), false);
-        assertEq(pipe.argTypeIsDynamic(1, 0), true);
+        nodes.push(pipeNode0);
+        nodes.push(pipeNode1);
     }
 
+    // TODO: move this to a lib
+    // TODO: test fail test cases
     function test_GetAbiSlice() public {
         bytes memory mockAbi = abi.encode(uint(32), uint8(64), uint8(96));
-        uint8 offset = 2;
 
-        bytes32 slice = pipe.getSlice(mockAbi, offset);
+        assertEq(
+            bytes32(uint(32)),
+            pipe.getSlice(mockAbi, 0)
+        );
 
-        console.log('====> Slice');
-        console.logBytes32(slice);
+        assertEq(
+            bytes32(uint(64)),
+            pipe.getSlice(mockAbi, 1)
+        );
 
-        // assertEq0(slice, abi.encode(1));
+        assertEq(
+            bytes32(uint(96)),
+            pipe.getSlice(mockAbi, 2)
+        );
+    }
+
+    // TODO: write tests for all combinations of Pipes
+    // Fixed => Dynamic => None
+    // None => Fixed => Dynamic
+    // None => None => Dynamic
+    // Fixed => Dynamic => None
+    // Fixed => Dynamic => Dynamic
+    // Fixed => Fixed => Fixed
+    // ETC
+    function test_RunNodeWithDynamicArg() public {
+        uint256 depositAmount = 10e18;
+
+        vm.startPrank(user0);
+        {
+            mockToken.transfer(address(pipe), depositAmount);
+
+            // NODE 0
+            bytes[] memory node0Args = new bytes[](1);
+            node0Args[0] = abi.encode(address(pipe));
+            Pipe.PipeNode memory pipeNode0 = Pipe.PipeNode({
+                target: address(mockToken),
+                functionSignature: 'balanceOf(address)',
+                args: node0Args
+            });
+
+            // NODE 1
+            bytes[] memory node1Args = new bytes[](2);
+            // Get first 32 bytes of balanceOf and fixed param user0
+            node1Args[0] = abi.encode(address(mockStake));
+            node1Args[1] = abi.encode(uint8(0));
+            Pipe.PipeNode memory pipeNode1 = Pipe.PipeNode({
+                target: address(mockToken),
+                functionSignature: 'approve(address,uint256)',
+                args: node1Args
+            });
+
+            // NODE 2
+            bytes[] memory node2Args = new bytes[](1);
+            // Get first 32 bytes of the data returned from balanceOf
+            node2Args[0] = abi.encode(0); 
+            Pipe.PipeNode memory pipeNode2 = Pipe.PipeNode({
+                target: address(mockStake),
+                functionSignature: 'deposit(uint256)',
+                args: node2Args
+            });
+
+            // INITIALIZE NODE ARGS TYPE
+            bool[][] memory nodeArgsType = new bool[][](4);
+            nodeArgsType[0] = new bool[](1);
+            nodeArgsType[1] = new bool[](2);
+            nodeArgsType[2] = new bool[](1);
+            nodeArgsType[3] = new bool[](1);
+
+            nodeArgsType[0][0] = false;
+            nodeArgsType[1][0] = false;
+            nodeArgsType[1][1] =  true;
+            nodeArgsType[2][0] = false;
+            nodeArgsType[3][0] = true;
+
+            Pipe.PipeNode[] memory pipeNodes = new Pipe.PipeNode[](4);
+            pipeNodes[0] = pipeNode0;
+            pipeNodes[1] = pipeNode1;
+            pipeNodes[2] = pipeNode0;
+            pipeNodes[3] = pipeNode2;
+
+            pipe.createPipe(pipeNodes, nodeArgsType);
+            pipe.runPipe();
+        }
+        vm.stopPrank();
+
+        assertEq(mockStake.balanceOf(address(pipe)), depositAmount);
     }
 
     // /** 
