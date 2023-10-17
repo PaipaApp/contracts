@@ -21,6 +21,7 @@ import {IERC721} from "openzeppelin-contracts/contracts/token/ERC721/IERC721.sol
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {Pausable} from "openzeppelin-contracts/contracts/security/Pausable.sol";
 import {BitMaps} from "openzeppelin-contracts/contracts/utils/structs/BitMaps.sol";
+import {PaipaLibrary} from "./PaipaLibrary.sol";
 
 // TODO: how reentrancy can affect execution
 
@@ -63,7 +64,6 @@ contract Pipe is Ownable, Pausable {
     error ExecutionBeforeInterval();
     error TransactionError(bytes result);
     error ArgsMismatch();
-    error InvalidDataOffset();
 
     function createPipe(
         PipeNode[] memory _pipeNodes,
@@ -73,9 +73,6 @@ contract Pipe is Ownable, Pausable {
 
 
         if (argTypes.length != _pipeNodes.length) {
-            console.log('DAMN Arg types length: %s', argTypes.length);
-            console.log('DAMN Pipe nodes length: %s', _pipeNodes.length);
-
             revert ArgsMismatch();
         }
 
@@ -151,9 +148,9 @@ contract Pipe is Ownable, Pausable {
 
         for (uint8 i; i < _pipeNode.args.length; ) {
             if (argsBitmap[_nodeId].get(i)) {
-                uint256 interval = bytesToUint256(_pipeNode.args[i]);
+                uint256 interval = PaipaLibrary.bytesToUint256(_pipeNode.args[i]);
 
-                data = bytes.concat(data, getSlice(_lastNodeResult, interval));
+                data = bytes.concat(data, PaipaLibrary.getSlice(_lastNodeResult, interval));
             } else {
                data = bytes.concat(data, _pipeNode.args[i]);
             }
@@ -162,31 +159,6 @@ contract Pipe is Ownable, Pausable {
                 i++;
             }
         }
-    }
-
-    // TODO: test this
-    function bytesToUint256(bytes memory _bytes) public pure returns (uint256 result) {
-        require(_bytes.length >= 32, "Bytes length should be at least 32 bytes.");
-
-        assembly {
-            result := mload(add(_bytes, 0x20))
-        }
-    }
-
-    // TODO: need some kind of guard to make sure bytes isn't bigger than 32 bytes
-    function getSlice(bytes memory data, uint256 intervalIndex) public pure returns (bytes32) {
-        uint256 start = intervalIndex * 32;
-
-        if(start + 32 > data.length)
-            revert InvalidDataOffset();
-
-        bytes32 slice;
-
-        assembly {
-            slice := mload(add(data, add(start, 32)))
-        }
-
-        return slice;
     }
 
     // @notice Execute an arbitrary transaction in order for this contract to become

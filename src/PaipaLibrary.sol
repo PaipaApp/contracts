@@ -12,39 +12,35 @@
                                    ░░░░░         
 */
 
-// SPDX-License-Identifier: MTI
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {Test} from "forge-std/Test.sol";
-import {Pipe} from "../../src/Pipe.sol";
-import {
-    MockContract0,
-    MockContract1,
-    MockStake,
-    MockToken
-} from "../mock/MockContracts.sol";
+library PaipaLibrary {
+    error InvalidBytesLength();
+    error InvalidDataOffset();
 
-abstract contract PipeFixture is Test {
-    address public user0;
+    function bytesToUint256(bytes memory _bytes) public pure returns (uint256 result) {
+        if (_bytes.length < 32)
+            revert InvalidBytesLength();
 
-    Pipe public pipe;
-    MockContract0 public mock0;
-    MockContract1 public mock1;
-    MockStake public mockStake;
-    MockToken public mockToken;
+        assembly {
+            result := mload(add(_bytes, 0x20))
+        }
+    }
 
-    function setUp() public virtual {
-        user0 = address(1);
+    // TODO: need some kind of guard to make sure bytes isn't bigger than 32 bytes
+    function getSlice(bytes memory data, uint256 intervalIndex) public pure returns (bytes32) {
+        uint256 start = intervalIndex * 32;
 
-        vm.prank(user0);
-        pipe = new Pipe(user0, 0);
+        if(start + 32 > data.length)
+            revert InvalidDataOffset();
 
-        mock0 = new MockContract0();
-        mock1 = new MockContract1();
+        bytes32 slice;
 
-        mockToken = new MockToken();
-        mockStake = new MockStake(mockToken);
+        assembly {
+            slice := mload(add(data, add(start, 32)))
+        }
 
-        mockToken.transfer(user0, 10e18);
+        return slice;
     }
 }
