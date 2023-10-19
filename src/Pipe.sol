@@ -1,15 +1,16 @@
-//
-//       ███████████             ███                     
-//      ░░███░░░░░███           ░░░                      
-//       ░███    ░███  ██████   ████  ████████   ██████  
-//       ░██████████  ░░░░░███ ░░███ ░░███░░███ ░░░░░███ 
-//       ░███░░░░░░    ███████  ░███  ░███ ░███  ███████ 
-//       ░███         ███░░███  ░███  ░███ ░███ ███░░███ 
-//       █████       ░░████████ █████ ░███████ ░░████████
-//      ░░░░░         ░░░░░░░░ ░░░░░  ░███░░░   ░░░░░░░░ 
-//                                    ░███               
-//                                    █████              
-//                                   ░░░░░         
+/**
+       ███████████             ███                     
+      ░░███░░░░░███           ░░░                      
+       ░███    ░███  ██████   ████  ████████   ██████  
+       ░██████████  ░░░░░███ ░░███ ░░███░░███ ░░░░░███ 
+       ░███░░░░░░    ███████  ░███  ░███ ░███  ███████ 
+       ░███         ███░░███  ░███  ░███ ░███ ███░░███ 
+       █████       ░░████████ █████ ░███████ ░░████████
+      ░░░░░         ░░░░░░░░ ░░░░░  ░███░░░   ░░░░░░░░ 
+                                    ░███               
+                                    █████              
+                                   ░░░░░         
+*/
 
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
@@ -32,19 +33,12 @@ contract Pipe is Ownable, Pausable {
     using BitMaps for BitMaps.BitMap;
     using SafeERC20 for IERC20;
 
-    enum Args {
-        None,
-        Static,
-        Dynamic
-    }
-
     constructor(address _owner, uint256 _executionInterval) {
         executionInterval = _executionInterval;
 
         transferOwnership(_owner);
     }
 
-    // TODO: variable packing
     struct PipeNode {
         address target;
         string functionSignature;
@@ -55,9 +49,9 @@ contract Pipe is Ownable, Pausable {
     // @dev Node ID => BitMap
     mapping(uint256 => BitMaps.BitMap) private argsBitmap;
 
-    PipeNode[] public pipeNodes;
-    uint256 lastExecutionTimestamp;
-    uint256 executionInterval;
+    PipeNode[] private pipeNodes;
+    uint256 private lastExecutionTimestamp;
+    uint256 private executionInterval;
 
     error PipeNodeError(uint256 nodeId, bytes result); 
     error InvalidTarget();
@@ -67,25 +61,27 @@ contract Pipe is Ownable, Pausable {
 
     function createPipe(
         PipeNode[] memory _pipeNodes,
-        bool[][] calldata argTypes
+        bool[][] calldata _argTypes
     ) external onlyOwner {
         PipeNode[] storage nodes = pipeNodes;
 
-
-        if (argTypes.length != _pipeNodes.length) {
+        if (_argTypes.length != _pipeNodes.length)
             revert ArgsMismatch();
-        }
 
         // @dev In order to override the current nodes
         if (nodes.length > 0)
             // TODO: calling delete on a dynamic array in storage sets the array
             // lenght to zero, but doesn't free the slots used by the array items
             // so this is maybe a problem
+            // UNFOLD: as the array size is set to zero, we cannot access the element
+            // using the array index, it throws an index out of bounds.
+            // Although that might be safe enough, should test the scenarios where this 
+            // can be exploited by using inline assembly
             delete pipeNodes;
 
         for (uint256 i = 0; i < _pipeNodes.length;) {
             PipeNode memory node = _pipeNodes[i];
-            bool[] memory argType = argTypes[i];
+            bool[] memory argType = _argTypes[i];
 
             if (argType.length != node.args.length)
                 revert ArgsMismatch();
