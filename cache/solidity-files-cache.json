@@ -1295,6 +1295,46 @@
         }
       }
     },
+    "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol": {
+      "lastModificationDate": 1693604297230,
+      "contentHash": "8961863c7c3748012c849e980477582c",
+      "sourceName": "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "BitMaps": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "BitMaps.sol/BitMaps.json"
+        }
+      }
+    },
     "script/Pipe.s.sol": {
       "lastModificationDate": 1692996044555,
       "contentHash": "50d80dc554d69d5159a5552b029110eb",
@@ -1350,9 +1390,49 @@
         }
       }
     },
+    "src/PaipaLibrary.sol": {
+      "lastModificationDate": 1697666839877,
+      "contentHash": "23ba1cf9cc2b27804f6528cbf54842cd",
+      "sourceName": "src/PaipaLibrary.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.20",
+      "artifacts": {
+        "PaipaLibrary": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "PaipaLibrary.sol/PaipaLibrary.json"
+        }
+      }
+    },
     "src/Pipe.sol": {
-      "lastModificationDate": 1693836176439,
-      "contentHash": "012396a6a4573c7eb4d34ee01da5f0e7",
+      "lastModificationDate": 1697683915895,
+      "contentHash": "99ead063c52fc1e8850ff863ea10a5c2",
       "sourceName": "src/Pipe.sol",
       "solcConfig": {
         "settings": {
@@ -1392,7 +1472,9 @@
         "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol",
         "lib/openzeppelin-contracts/contracts/utils/Address.sol",
         "lib/openzeppelin-contracts/contracts/utils/Context.sol",
-        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol"
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
+        "src/PaipaLibrary.sol"
       ],
       "versionRequirement": "^0.8.20",
       "artifacts": {
@@ -1444,6 +1526,8 @@
         "lib/openzeppelin-contracts/contracts/utils/Address.sol",
         "lib/openzeppelin-contracts/contracts/utils/Context.sol",
         "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
+        "src/PaipaLibrary.sol",
         "src/Pipe.sol"
       ],
       "versionRequirement": "^0.8.20",
@@ -1453,10 +1537,110 @@
         }
       }
     },
-    "test/Pipe/PipeUnit.t.sol": {
-      "lastModificationDate": 1693836771880,
-      "contentHash": "292d5bc9df1fd6abe1f968205c325805",
-      "sourceName": "test/Pipe/PipeUnit.t.sol",
+    "test/PaipaLibrary/unit/bytesToUint256.t.sol": {
+      "lastModificationDate": 1697666839877,
+      "contentHash": "ba953f288abffce6e814cb71c87040c1",
+      "sourceName": "test/PaipaLibrary/unit/bytesToUint256.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Base.sol",
+        "lib/forge-std/src/StdAssertions.sol",
+        "lib/forge-std/src/StdChains.sol",
+        "lib/forge-std/src/StdCheats.sol",
+        "lib/forge-std/src/StdError.sol",
+        "lib/forge-std/src/StdInvariant.sol",
+        "lib/forge-std/src/StdJson.sol",
+        "lib/forge-std/src/StdMath.sol",
+        "lib/forge-std/src/StdStorage.sol",
+        "lib/forge-std/src/StdStyle.sol",
+        "lib/forge-std/src/StdUtils.sol",
+        "lib/forge-std/src/Test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol",
+        "lib/forge-std/src/interfaces/IMulticall3.sol",
+        "lib/forge-std/src/safeconsole.sol",
+        "src/PaipaLibrary.sol"
+      ],
+      "versionRequirement": null,
+      "artifacts": {
+        "PaipaLibraryTest": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "bytesToUint256.t.sol/PaipaLibraryTest.json"
+        }
+      }
+    },
+    "test/PaipaLibrary/unit/getSlice.t.sol": {
+      "lastModificationDate": 1697666839877,
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "sourceName": "test/PaipaLibrary/unit/getSlice.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": null,
+      "artifacts": {
+        "getSlice.t": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "getSlice.t.sol/getSlice.t.json"
+        }
+      }
+    },
+    "test/Pipe/unit/createPipe.t.sol": {
+      "lastModificationDate": 1697683333155,
+      "contentHash": "11c9bc07e2042745545719ff0d72bf63",
+      "sourceName": "test/Pipe/unit/createPipe.t.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
@@ -1515,20 +1699,98 @@
         "lib/openzeppelin-contracts/contracts/utils/Address.sol",
         "lib/openzeppelin-contracts/contracts/utils/Context.sol",
         "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
+        "src/PaipaLibrary.sol",
         "src/Pipe.sol",
+        "test/fixtures/PipeFixture.sol",
         "test/mock/MockContracts.sol"
       ],
       "versionRequirement": "^0.8.20",
       "artifacts": {
-        "PipeUnitTest": {
-          "0.8.20+commit.a1b79de6.Linux.gcc": "PipeUnit.t.sol/PipeUnitTest.json"
+        "CreatePipeTest": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "createPipe.t.sol/CreatePipeTest.json"
         }
       }
     },
-    "test/PipeDeployer/PipeFactoryUnit.sol": {
-      "lastModificationDate": 1693837615444,
-      "contentHash": "240dbbfe9abb4d3cd04e3e32d4d2d131",
-      "sourceName": "test/PipeDeployer/PipeFactoryUnit.sol",
+    "test/Pipe/unit/runPipe.t.sol": {
+      "lastModificationDate": 1697666839877,
+      "contentHash": "241177f7067dbcb9705361f360ec0e07",
+      "sourceName": "test/Pipe/unit/runPipe.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Base.sol",
+        "lib/forge-std/src/StdAssertions.sol",
+        "lib/forge-std/src/StdChains.sol",
+        "lib/forge-std/src/StdCheats.sol",
+        "lib/forge-std/src/StdError.sol",
+        "lib/forge-std/src/StdInvariant.sol",
+        "lib/forge-std/src/StdJson.sol",
+        "lib/forge-std/src/StdMath.sol",
+        "lib/forge-std/src/StdStorage.sol",
+        "lib/forge-std/src/StdStyle.sol",
+        "lib/forge-std/src/StdUtils.sol",
+        "lib/forge-std/src/Test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol",
+        "lib/forge-std/src/interfaces/IMulticall3.sol",
+        "lib/forge-std/src/safeconsole.sol",
+        "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+        "lib/openzeppelin-contracts/contracts/security/Pausable.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Address.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
+        "src/PaipaLibrary.sol",
+        "src/Pipe.sol",
+        "test/fixtures/PipeFixture.sol",
+        "test/mock/MockContracts.sol"
+      ],
+      "versionRequirement": "^0.8.20",
+      "artifacts": {
+        "RunPipeTest": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "runPipe.t.sol/RunPipeTest.json"
+        }
+      }
+    },
+    "test/PipeDeployer/unit/deployPipe.t.sol": {
+      "lastModificationDate": 1697666839877,
+      "contentHash": "f8928e2a573315aba8861e17e0a4699b",
+      "sourceName": "test/PipeDeployer/unit/deployPipe.t.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
@@ -1585,18 +1847,94 @@
         "lib/openzeppelin-contracts/contracts/utils/Address.sol",
         "lib/openzeppelin-contracts/contracts/utils/Context.sol",
         "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
+        "src/PaipaLibrary.sol",
         "src/Pipe.sol",
         "src/PipeFactory.sol"
       ],
-      "versionRequirement": null,
+      "versionRequirement": "^0.8.20",
       "artifacts": {
         "PipeDeployerUnitTest": {
-          "0.8.20+commit.a1b79de6.Linux.gcc": "PipeFactoryUnit.sol/PipeDeployerUnitTest.json"
+          "0.8.20+commit.a1b79de6.Linux.gcc": "deployPipe.t.sol/PipeDeployerUnitTest.json"
+        }
+      }
+    },
+    "test/fixtures/PipeFixture.sol": {
+      "lastModificationDate": 1697666839877,
+      "contentHash": "f348ba4eebce75db0ba794e63378094b",
+      "sourceName": "test/fixtures/PipeFixture.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Base.sol",
+        "lib/forge-std/src/StdAssertions.sol",
+        "lib/forge-std/src/StdChains.sol",
+        "lib/forge-std/src/StdCheats.sol",
+        "lib/forge-std/src/StdError.sol",
+        "lib/forge-std/src/StdInvariant.sol",
+        "lib/forge-std/src/StdJson.sol",
+        "lib/forge-std/src/StdMath.sol",
+        "lib/forge-std/src/StdStorage.sol",
+        "lib/forge-std/src/StdStyle.sol",
+        "lib/forge-std/src/StdUtils.sol",
+        "lib/forge-std/src/Test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol",
+        "lib/forge-std/src/interfaces/IMulticall3.sol",
+        "lib/forge-std/src/safeconsole.sol",
+        "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+        "lib/openzeppelin-contracts/contracts/security/Pausable.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Address.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
+        "src/PaipaLibrary.sol",
+        "src/Pipe.sol",
+        "test/mock/MockContracts.sol"
+      ],
+      "versionRequirement": "^0.8.20",
+      "artifacts": {
+        "PipeFixture": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "PipeFixture.sol/PipeFixture.json"
         }
       }
     },
     "test/mock/MockContracts.sol": {
-      "lastModificationDate": 1693690180700,
+      "lastModificationDate": 1696896090221,
       "contentHash": "e48571d4b2f8ae6cef919c1c69392062",
       "sourceName": "test/mock/MockContracts.sol",
       "solcConfig": {
@@ -1647,6 +1985,86 @@
         },
         "MockToken": {
           "0.8.20+commit.a1b79de6.Linux.gcc": "MockContracts.sol/MockToken.json"
+        }
+      }
+    },
+    "test/mock/createPipe.t.sol": {
+      "lastModificationDate": 1696900211013,
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "sourceName": "test/mock/createPipe.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": null,
+      "artifacts": {
+        "createPipe.t": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "createPipe.t.sol/createPipe.t.json"
+        }
+      }
+    },
+    "test/mock/runPipe.t.sol": {
+      "lastModificationDate": 1696900854587,
+      "contentHash": "d316c1b885ceda44acada02aaafed10c",
+      "sourceName": "test/mock/runPipe.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": null,
+      "artifacts": {
+        "runPipe.t": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "runPipe.t.sol/runPipe.t.json"
         }
       }
     }
