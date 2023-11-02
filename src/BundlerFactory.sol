@@ -1,3 +1,17 @@
+/**
+       ███████████             ███                     
+      ░░███░░░░░███           ░░░                      
+       ░███    ░███  ██████   ████  ████████   ██████  
+       ░██████████  ░░░░░███ ░░███ ░░███░░███ ░░░░░███ 
+       ░███░░░░░░    ███████  ░███  ░███ ░███  ███████ 
+       ░███         ███░░███  ░███  ░███ ░███ ███░░███ 
+       █████       ░░████████ █████ ░███████ ░░████████
+      ░░░░░         ░░░░░░░░ ░░░░░  ░███░░░   ░░░░░░░░ 
+                                    ░███               
+                                    █████              
+                                   ░░░░░         
+*/
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
@@ -12,13 +26,13 @@ contract BundlerFactory is Ownable {
     }
 
     function deployBundler(uint256 _executionInterval) external returns (address) {
-        Bundler pipe = new Bundler(msg.sender, _executionInterval);
+        Bundler bundler = new Bundler(msg.sender, _executionInterval);
 
-        address pipeAddress = address(pipe);
+        address bundlerAddress = address(bundler);
 
-        userBundlers[msg.sender].push(pipeAddress);
+        userBundlers[msg.sender].push(bundlerAddress);
 
-        return pipeAddress;
+        return bundlerAddress;
     }
 
     function getUserBundlers(address user) external view returns (address[] memory) {
