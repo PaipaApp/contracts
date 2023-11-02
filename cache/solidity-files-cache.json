@@ -12,7 +12,7 @@
   },
   "files": {
     "lib/forge-std/lib/ds-test/src/test.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "9febff9d09f18af5306669dc276c4c43",
       "sourceName": "lib/forge-std/lib/ds-test/src/test.sol",
       "solcConfig": {
@@ -22,6 +22,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -52,7 +53,7 @@
       }
     },
     "lib/forge-std/src/Base.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "ee13c050b1914464f1d3f90cde90204b",
       "sourceName": "lib/forge-std/src/Base.sol",
       "solcConfig": {
@@ -62,6 +63,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -101,7 +103,7 @@
       }
     },
     "lib/forge-std/src/Script.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "ba325c778a7da8a21c2136aa32763c14",
       "sourceName": "lib/forge-std/src/Script.sol",
       "solcConfig": {
@@ -111,6 +113,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -155,7 +158,7 @@
       }
     },
     "lib/forge-std/src/StdAssertions.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "6cc2858240bcd443debbbf075490e325",
       "sourceName": "lib/forge-std/src/StdAssertions.sol",
       "solcConfig": {
@@ -165,6 +168,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -198,7 +202,7 @@
       }
     },
     "lib/forge-std/src/StdChains.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "b0324b2e5a11948f852032aa293b3a05",
       "sourceName": "lib/forge-std/src/StdChains.sol",
       "solcConfig": {
@@ -208,6 +212,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -240,7 +245,7 @@
       }
     },
     "lib/forge-std/src/StdCheats.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "d984e2c76dae07bac1e292af2a5d4fd1",
       "sourceName": "lib/forge-std/src/StdCheats.sol",
       "solcConfig": {
@@ -250,6 +255,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -287,7 +293,7 @@
       }
     },
     "lib/forge-std/src/StdError.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "64c896e1276a291776e5ea5aecb3870a",
       "sourceName": "lib/forge-std/src/StdError.sol",
       "solcConfig": {
@@ -297,6 +303,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -327,7 +334,7 @@
       }
     },
     "lib/forge-std/src/StdInvariant.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "6d12d54c05754ad4e03066726dca3a84",
       "sourceName": "lib/forge-std/src/StdInvariant.sol",
       "solcConfig": {
@@ -337,6 +344,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -367,7 +375,7 @@
       }
     },
     "lib/forge-std/src/StdJson.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "2e1d13674e152408867795362d833c24",
       "sourceName": "lib/forge-std/src/StdJson.sol",
       "solcConfig": {
@@ -377,6 +385,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -409,7 +418,7 @@
       }
     },
     "lib/forge-std/src/StdMath.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "9da8f453eba6bb98f3d75bc6822bfb29",
       "sourceName": "lib/forge-std/src/StdMath.sol",
       "solcConfig": {
@@ -419,6 +428,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -449,7 +459,7 @@
       }
     },
     "lib/forge-std/src/StdStorage.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "4fc0ff0cb196a405e5a4c9fa1c6acccb",
       "sourceName": "lib/forge-std/src/StdStorage.sol",
       "solcConfig": {
@@ -459,6 +469,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -494,7 +505,7 @@
       }
     },
     "lib/forge-std/src/StdStyle.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "6281165a12aa639705c691fccefd855e",
       "sourceName": "lib/forge-std/src/StdStyle.sol",
       "solcConfig": {
@@ -504,6 +515,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -536,7 +548,7 @@
       }
     },
     "lib/forge-std/src/StdUtils.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "3ce83748fd76644688f916c9cced545b",
       "sourceName": "lib/forge-std/src/StdUtils.sol",
       "solcConfig": {
@@ -546,6 +558,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -579,7 +592,7 @@
       }
     },
     "lib/forge-std/src/Test.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "15866901137b5670eabf31362523bd28",
       "sourceName": "lib/forge-std/src/Test.sol",
       "solcConfig": {
@@ -589,6 +602,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -637,7 +651,7 @@
       }
     },
     "lib/forge-std/src/Vm.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "e2217cda3b000d925a1a7f272a965534",
       "sourceName": "lib/forge-std/src/Vm.sol",
       "solcConfig": {
@@ -647,6 +661,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -680,7 +695,7 @@
       }
     },
     "lib/forge-std/src/console.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689973,
       "contentHash": "100b8a33b917da1147740d7ab8b0ded3",
       "sourceName": "lib/forge-std/src/console.sol",
       "solcConfig": {
@@ -690,6 +705,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -720,7 +736,7 @@
       }
     },
     "lib/forge-std/src/console2.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689977,
       "contentHash": "491ca717c1915995e78cc361485a3067",
       "sourceName": "lib/forge-std/src/console2.sol",
       "solcConfig": {
@@ -730,6 +746,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -760,7 +777,7 @@
       }
     },
     "lib/forge-std/src/interfaces/IMulticall3.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689977,
       "contentHash": "7b131ca1ca32ef6378b7b9ad5488b901",
       "sourceName": "lib/forge-std/src/interfaces/IMulticall3.sol",
       "solcConfig": {
@@ -770,6 +787,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -800,7 +818,7 @@
       }
     },
     "lib/forge-std/src/safeconsole.sol": {
-      "lastModificationDate": 1692996044487,
+      "lastModificationDate": 1698962689977,
       "contentHash": "ac3b1bf5a444db5db3656021830258a8",
       "sourceName": "lib/forge-std/src/safeconsole.sol",
       "solcConfig": {
@@ -810,6 +828,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -840,7 +859,7 @@
       }
     },
     "lib/openzeppelin-contracts/contracts/access/Ownable.sol": {
-      "lastModificationDate": 1693604297222,
+      "lastModificationDate": 1698962893838,
       "contentHash": "5a20b2cad87ddb61c7a3a6af21289e28",
       "sourceName": "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
       "solcConfig": {
@@ -850,6 +869,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -882,7 +902,7 @@
       }
     },
     "lib/openzeppelin-contracts/contracts/security/Pausable.sol": {
-      "lastModificationDate": 1693832536931,
+      "lastModificationDate": 1698962893854,
       "contentHash": "25c8108f36fdd472bc78d4c4af240c11",
       "sourceName": "lib/openzeppelin-contracts/contracts/security/Pausable.sol",
       "solcConfig": {
@@ -892,6 +912,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -924,7 +945,7 @@
       }
     },
     "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol": {
-      "lastModificationDate": 1693604297226,
+      "lastModificationDate": 1698962893854,
       "contentHash": "3ae5166c6827a9cf1a7a462d1632b464",
       "sourceName": "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
@@ -934,6 +955,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -968,7 +990,7 @@
       }
     },
     "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": {
-      "lastModificationDate": 1693604297226,
+      "lastModificationDate": 1698962893854,
       "contentHash": "df36f7051335cd1e748b1b6463b7fdd3",
       "sourceName": "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
@@ -978,6 +1000,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1008,7 +1031,7 @@
       }
     },
     "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
-      "lastModificationDate": 1693604297230,
+      "lastModificationDate": 1698962893854,
       "contentHash": "909ab67fc5c25033fe6cd364f8c056f9",
       "sourceName": "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
       "solcConfig": {
@@ -1018,6 +1041,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1050,7 +1074,7 @@
       }
     },
     "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol": {
-      "lastModificationDate": 1693604297230,
+      "lastModificationDate": 1698962893854,
       "contentHash": "aa849939a4ae83a4dcb2dca9b3e9e707",
       "sourceName": "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol",
       "solcConfig": {
@@ -1060,6 +1084,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1090,7 +1115,7 @@
       }
     },
     "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol": {
-      "lastModificationDate": 1693604998274,
+      "lastModificationDate": 1698962893858,
       "contentHash": "1b5d667d3740d866eca0352758e59827",
       "sourceName": "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol",
       "solcConfig": {
@@ -1100,6 +1125,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1134,7 +1160,7 @@
       }
     },
     "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol": {
-      "lastModificationDate": 1693604297230,
+      "lastModificationDate": 1698962893858,
       "contentHash": "48de4c9a3a4ae5ef66a2aa620843413f",
       "sourceName": "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol",
       "solcConfig": {
@@ -1144,6 +1170,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1176,7 +1203,7 @@
       }
     },
     "lib/openzeppelin-contracts/contracts/utils/Address.sol": {
-      "lastModificationDate": 1693604297230,
+      "lastModificationDate": 1698962893858,
       "contentHash": "211ffd288c1588ba8c10eae668ca3c66",
       "sourceName": "lib/openzeppelin-contracts/contracts/utils/Address.sol",
       "solcConfig": {
@@ -1186,6 +1213,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1216,7 +1244,7 @@
       }
     },
     "lib/openzeppelin-contracts/contracts/utils/Context.sol": {
-      "lastModificationDate": 1693604297230,
+      "lastModificationDate": 1698962893858,
       "contentHash": "5f2c5c4b6af2dd4551027144797bc8be",
       "sourceName": "lib/openzeppelin-contracts/contracts/utils/Context.sol",
       "solcConfig": {
@@ -1226,6 +1254,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1256,7 +1285,7 @@
       }
     },
     "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol": {
-      "lastModificationDate": 1693604297230,
+      "lastModificationDate": 1698962893862,
       "contentHash": "03e6768535ac4da0e9756f1d8a4a018a",
       "sourceName": "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {
@@ -1266,6 +1295,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1296,7 +1326,7 @@
       }
     },
     "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol": {
-      "lastModificationDate": 1693604297230,
+      "lastModificationDate": 1698962893862,
       "contentHash": "8961863c7c3748012c849e980477582c",
       "sourceName": "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
       "solcConfig": {
@@ -1306,6 +1336,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1336,7 +1367,7 @@
       }
     },
     "script/Pipe.s.sol": {
-      "lastModificationDate": 1692996044555,
+      "lastModificationDate": 1698962689977,
       "contentHash": "50d80dc554d69d5159a5552b029110eb",
       "sourceName": "script/Pipe.s.sol",
       "solcConfig": {
@@ -1346,6 +1377,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1390,10 +1422,10 @@
         }
       }
     },
-    "src/PaipaLibrary.sol": {
-      "lastModificationDate": 1697666839877,
-      "contentHash": "23ba1cf9cc2b27804f6528cbf54842cd",
-      "sourceName": "src/PaipaLibrary.sol",
+    "src/Bundler.sol": {
+      "lastModificationDate": 1698963246245,
+      "contentHash": "8182d017fc85b64db13828bd0735b2f5",
+      "sourceName": "src/Bundler.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
@@ -1401,46 +1433,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "paris",
-          "libraries": {}
-        }
-      },
-      "imports": [],
-      "versionRequirement": "^0.8.20",
-      "artifacts": {
-        "PaipaLibrary": {
-          "0.8.20+commit.a1b79de6.Linux.gcc": "PaipaLibrary.sol/PaipaLibrary.json"
-        }
-      }
-    },
-    "src/Pipe.sol": {
-      "lastModificationDate": 1697683915895,
-      "contentHash": "99ead063c52fc1e8850ff863ea10a5c2",
-      "sourceName": "src/Pipe.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1478,15 +1471,15 @@
       ],
       "versionRequirement": "^0.8.20",
       "artifacts": {
-        "Pipe": {
-          "0.8.20+commit.a1b79de6.Linux.gcc": "Pipe.sol/Pipe.json"
+        "Bundler": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "Bundler.sol/Bundler.json"
         }
       }
     },
-    "src/PipeFactory.sol": {
-      "lastModificationDate": 1693837423623,
-      "contentHash": "6d02538a5e1fe24d561f165f07454f3d",
-      "sourceName": "src/PipeFactory.sol",
+    "src/BundlerFactory.sol": {
+      "lastModificationDate": 1698963398011,
+      "contentHash": "8640e6822cfaf4fd39449b3c37f6a2ef",
+      "sourceName": "src/BundlerFactory.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
@@ -1494,6 +1487,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1527,18 +1521,284 @@
         "lib/openzeppelin-contracts/contracts/utils/Context.sol",
         "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
         "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
-        "src/PaipaLibrary.sol",
-        "src/Pipe.sol"
+        "src/Bundler.sol",
+        "src/PaipaLibrary.sol"
       ],
       "versionRequirement": "^0.8.20",
       "artifacts": {
-        "PipeFactory": {
-          "0.8.20+commit.a1b79de6.Linux.gcc": "PipeFactory.sol/PipeFactory.json"
+        "BundlerFactory": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "BundlerFactory.sol/BundlerFactory.json"
+        }
+      }
+    },
+    "src/PaipaLibrary.sol": {
+      "lastModificationDate": 1698962689977,
+      "contentHash": "23ba1cf9cc2b27804f6528cbf54842cd",
+      "sourceName": "src/PaipaLibrary.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "useLiteralContent": false,
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.20",
+      "artifacts": {
+        "PaipaLibrary": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "PaipaLibrary.sol/PaipaLibrary.json"
+        }
+      }
+    },
+    "test/Bundler/integration/createBundle.t.sol": {
+      "lastModificationDate": 1698963633022,
+      "contentHash": "50c3a5410cddb01564bd1bc0aba7e914",
+      "sourceName": "test/Bundler/integration/createBundle.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "useLiteralContent": false,
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Base.sol",
+        "lib/forge-std/src/StdAssertions.sol",
+        "lib/forge-std/src/StdChains.sol",
+        "lib/forge-std/src/StdCheats.sol",
+        "lib/forge-std/src/StdError.sol",
+        "lib/forge-std/src/StdInvariant.sol",
+        "lib/forge-std/src/StdJson.sol",
+        "lib/forge-std/src/StdMath.sol",
+        "lib/forge-std/src/StdStorage.sol",
+        "lib/forge-std/src/StdStyle.sol",
+        "lib/forge-std/src/StdUtils.sol",
+        "lib/forge-std/src/Test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol",
+        "lib/forge-std/src/interfaces/IMulticall3.sol",
+        "lib/forge-std/src/safeconsole.sol",
+        "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+        "lib/openzeppelin-contracts/contracts/security/Pausable.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Address.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
+        "src/Bundler.sol",
+        "src/PaipaLibrary.sol",
+        "test/fixtures/BundlerFixture.sol",
+        "test/mock/MockContracts.sol"
+      ],
+      "versionRequirement": "^0.8.20",
+      "artifacts": {
+        "CreateBundlerTest": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "createBundle.t.sol/CreateBundlerTest.json"
+        }
+      }
+    },
+    "test/Bundler/integration/runBundle.t.sol": {
+      "lastModificationDate": 1698963852672,
+      "contentHash": "56abe57c01f560c3b6aca90350107d19",
+      "sourceName": "test/Bundler/integration/runBundle.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "useLiteralContent": false,
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Base.sol",
+        "lib/forge-std/src/StdAssertions.sol",
+        "lib/forge-std/src/StdChains.sol",
+        "lib/forge-std/src/StdCheats.sol",
+        "lib/forge-std/src/StdError.sol",
+        "lib/forge-std/src/StdInvariant.sol",
+        "lib/forge-std/src/StdJson.sol",
+        "lib/forge-std/src/StdMath.sol",
+        "lib/forge-std/src/StdStorage.sol",
+        "lib/forge-std/src/StdStyle.sol",
+        "lib/forge-std/src/StdUtils.sol",
+        "lib/forge-std/src/Test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol",
+        "lib/forge-std/src/interfaces/IMulticall3.sol",
+        "lib/forge-std/src/safeconsole.sol",
+        "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+        "lib/openzeppelin-contracts/contracts/security/Pausable.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Address.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
+        "src/Bundler.sol",
+        "src/PaipaLibrary.sol",
+        "test/fixtures/BundlerFixture.sol",
+        "test/mock/MockContracts.sol"
+      ],
+      "versionRequirement": "^0.8.20",
+      "artifacts": {
+        "RunBundlerTest": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "runBundle.t.sol/RunBundlerTest.json"
+        }
+      }
+    },
+    "test/BundlerFactory/unit/deployBundler.t.sol": {
+      "lastModificationDate": 1698963430835,
+      "contentHash": "d2470e4ce7df62253e6ef86adc31a3e6",
+      "sourceName": "test/BundlerFactory/unit/deployBundler.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "useLiteralContent": false,
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Base.sol",
+        "lib/forge-std/src/StdAssertions.sol",
+        "lib/forge-std/src/StdChains.sol",
+        "lib/forge-std/src/StdCheats.sol",
+        "lib/forge-std/src/StdError.sol",
+        "lib/forge-std/src/StdInvariant.sol",
+        "lib/forge-std/src/StdJson.sol",
+        "lib/forge-std/src/StdMath.sol",
+        "lib/forge-std/src/StdStorage.sol",
+        "lib/forge-std/src/StdStyle.sol",
+        "lib/forge-std/src/StdUtils.sol",
+        "lib/forge-std/src/Test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol",
+        "lib/forge-std/src/interfaces/IMulticall3.sol",
+        "lib/forge-std/src/safeconsole.sol",
+        "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+        "lib/openzeppelin-contracts/contracts/security/Pausable.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol",
+        "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Address.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+        "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
+        "src/Bundler.sol",
+        "src/BundlerFactory.sol",
+        "src/PaipaLibrary.sol"
+      ],
+      "versionRequirement": "^0.8.20",
+      "artifacts": {
+        "BundlerDeployerUnitTest": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "deployBundler.t.sol/BundlerDeployerUnitTest.json"
         }
       }
     },
     "test/PaipaLibrary/unit/bytesToUint256.t.sol": {
-      "lastModificationDate": 1697666839877,
+      "lastModificationDate": 1698962689977,
       "contentHash": "ba953f288abffce6e814cb71c87040c1",
       "sourceName": "test/PaipaLibrary/unit/bytesToUint256.t.sol",
       "solcConfig": {
@@ -1548,6 +1808,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1598,7 +1859,7 @@
       }
     },
     "test/PaipaLibrary/unit/getSlice.t.sol": {
-      "lastModificationDate": 1697666839877,
+      "lastModificationDate": 1698962689977,
       "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
       "sourceName": "test/PaipaLibrary/unit/getSlice.t.sol",
       "solcConfig": {
@@ -1608,6 +1869,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1637,10 +1899,10 @@
         }
       }
     },
-    "test/Pipe/unit/createPipe.t.sol": {
-      "lastModificationDate": 1697683333155,
-      "contentHash": "11c9bc07e2042745545719ff0d72bf63",
-      "sourceName": "test/Pipe/unit/createPipe.t.sol",
+    "test/fixtures/BundlerFixture.sol": {
+      "lastModificationDate": 1698963878472,
+      "contentHash": "c6b6a8a98f63b30b3013daef045cdacd",
+      "sourceName": "test/fixtures/BundlerFixture.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
@@ -1648,6 +1910,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1700,241 +1963,19 @@
         "lib/openzeppelin-contracts/contracts/utils/Context.sol",
         "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
         "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
+        "src/Bundler.sol",
         "src/PaipaLibrary.sol",
-        "src/Pipe.sol",
-        "test/fixtures/PipeFixture.sol",
         "test/mock/MockContracts.sol"
       ],
       "versionRequirement": "^0.8.20",
       "artifacts": {
-        "CreatePipeTest": {
-          "0.8.20+commit.a1b79de6.Linux.gcc": "createPipe.t.sol/CreatePipeTest.json"
-        }
-      }
-    },
-    "test/Pipe/unit/runPipe.t.sol": {
-      "lastModificationDate": 1697666839877,
-      "contentHash": "241177f7067dbcb9705361f360ec0e07",
-      "sourceName": "test/Pipe/unit/runPipe.t.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "paris",
-          "libraries": {}
-        }
-      },
-      "imports": [
-        "lib/forge-std/lib/ds-test/src/test.sol",
-        "lib/forge-std/src/Base.sol",
-        "lib/forge-std/src/StdAssertions.sol",
-        "lib/forge-std/src/StdChains.sol",
-        "lib/forge-std/src/StdCheats.sol",
-        "lib/forge-std/src/StdError.sol",
-        "lib/forge-std/src/StdInvariant.sol",
-        "lib/forge-std/src/StdJson.sol",
-        "lib/forge-std/src/StdMath.sol",
-        "lib/forge-std/src/StdStorage.sol",
-        "lib/forge-std/src/StdStyle.sol",
-        "lib/forge-std/src/StdUtils.sol",
-        "lib/forge-std/src/Test.sol",
-        "lib/forge-std/src/Vm.sol",
-        "lib/forge-std/src/console.sol",
-        "lib/forge-std/src/console2.sol",
-        "lib/forge-std/src/interfaces/IMulticall3.sol",
-        "lib/forge-std/src/safeconsole.sol",
-        "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
-        "lib/openzeppelin-contracts/contracts/security/Pausable.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol",
-        "lib/openzeppelin-contracts/contracts/utils/Address.sol",
-        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
-        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
-        "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
-        "src/PaipaLibrary.sol",
-        "src/Pipe.sol",
-        "test/fixtures/PipeFixture.sol",
-        "test/mock/MockContracts.sol"
-      ],
-      "versionRequirement": "^0.8.20",
-      "artifacts": {
-        "RunPipeTest": {
-          "0.8.20+commit.a1b79de6.Linux.gcc": "runPipe.t.sol/RunPipeTest.json"
-        }
-      }
-    },
-    "test/PipeDeployer/unit/deployPipe.t.sol": {
-      "lastModificationDate": 1697666839877,
-      "contentHash": "f8928e2a573315aba8861e17e0a4699b",
-      "sourceName": "test/PipeDeployer/unit/deployPipe.t.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "paris",
-          "libraries": {}
-        }
-      },
-      "imports": [
-        "lib/forge-std/lib/ds-test/src/test.sol",
-        "lib/forge-std/src/Base.sol",
-        "lib/forge-std/src/StdAssertions.sol",
-        "lib/forge-std/src/StdChains.sol",
-        "lib/forge-std/src/StdCheats.sol",
-        "lib/forge-std/src/StdError.sol",
-        "lib/forge-std/src/StdInvariant.sol",
-        "lib/forge-std/src/StdJson.sol",
-        "lib/forge-std/src/StdMath.sol",
-        "lib/forge-std/src/StdStorage.sol",
-        "lib/forge-std/src/StdStyle.sol",
-        "lib/forge-std/src/StdUtils.sol",
-        "lib/forge-std/src/Test.sol",
-        "lib/forge-std/src/Vm.sol",
-        "lib/forge-std/src/console.sol",
-        "lib/forge-std/src/console2.sol",
-        "lib/forge-std/src/interfaces/IMulticall3.sol",
-        "lib/forge-std/src/safeconsole.sol",
-        "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
-        "lib/openzeppelin-contracts/contracts/security/Pausable.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol",
-        "lib/openzeppelin-contracts/contracts/utils/Address.sol",
-        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
-        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
-        "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
-        "src/PaipaLibrary.sol",
-        "src/Pipe.sol",
-        "src/PipeFactory.sol"
-      ],
-      "versionRequirement": "^0.8.20",
-      "artifacts": {
-        "PipeDeployerUnitTest": {
-          "0.8.20+commit.a1b79de6.Linux.gcc": "deployPipe.t.sol/PipeDeployerUnitTest.json"
-        }
-      }
-    },
-    "test/fixtures/PipeFixture.sol": {
-      "lastModificationDate": 1697666839877,
-      "contentHash": "f348ba4eebce75db0ba794e63378094b",
-      "sourceName": "test/fixtures/PipeFixture.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "paris",
-          "libraries": {}
-        }
-      },
-      "imports": [
-        "lib/forge-std/lib/ds-test/src/test.sol",
-        "lib/forge-std/src/Base.sol",
-        "lib/forge-std/src/StdAssertions.sol",
-        "lib/forge-std/src/StdChains.sol",
-        "lib/forge-std/src/StdCheats.sol",
-        "lib/forge-std/src/StdError.sol",
-        "lib/forge-std/src/StdInvariant.sol",
-        "lib/forge-std/src/StdJson.sol",
-        "lib/forge-std/src/StdMath.sol",
-        "lib/forge-std/src/StdStorage.sol",
-        "lib/forge-std/src/StdStyle.sol",
-        "lib/forge-std/src/StdUtils.sol",
-        "lib/forge-std/src/Test.sol",
-        "lib/forge-std/src/Vm.sol",
-        "lib/forge-std/src/console.sol",
-        "lib/forge-std/src/console2.sol",
-        "lib/forge-std/src/interfaces/IMulticall3.sol",
-        "lib/forge-std/src/safeconsole.sol",
-        "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
-        "lib/openzeppelin-contracts/contracts/security/Pausable.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol",
-        "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol",
-        "lib/openzeppelin-contracts/contracts/utils/Address.sol",
-        "lib/openzeppelin-contracts/contracts/utils/Context.sol",
-        "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
-        "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
-        "src/PaipaLibrary.sol",
-        "src/Pipe.sol",
-        "test/mock/MockContracts.sol"
-      ],
-      "versionRequirement": "^0.8.20",
-      "artifacts": {
-        "PipeFixture": {
-          "0.8.20+commit.a1b79de6.Linux.gcc": "PipeFixture.sol/PipeFixture.json"
+        "BundlerFixture": {
+          "0.8.20+commit.a1b79de6.Linux.gcc": "BundlerFixture.sol/BundlerFixture.json"
         }
       }
     },
     "test/mock/MockContracts.sol": {
-      "lastModificationDate": 1696896090221,
+      "lastModificationDate": 1698962689981,
       "contentHash": "e48571d4b2f8ae6cef919c1c69392062",
       "sourceName": "test/mock/MockContracts.sol",
       "solcConfig": {
@@ -1944,6 +1985,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -1989,7 +2031,7 @@
       }
     },
     "test/mock/createPipe.t.sol": {
-      "lastModificationDate": 1696900211013,
+      "lastModificationDate": 1698962689981,
       "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
       "sourceName": "test/mock/createPipe.t.sol",
       "solcConfig": {
@@ -1999,6 +2041,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },
@@ -2029,7 +2072,7 @@
       }
     },
     "test/mock/runPipe.t.sol": {
-      "lastModificationDate": 1696900854587,
+      "lastModificationDate": 1698962689981,
       "contentHash": "d316c1b885ceda44acada02aaafed10c",
       "sourceName": "test/mock/runPipe.t.sol",
       "solcConfig": {
@@ -2039,6 +2082,7 @@
             "runs": 200
           },
           "metadata": {
+            "useLiteralContent": false,
             "bytecodeHash": "ipfs",
             "appendCBOR": true
           },

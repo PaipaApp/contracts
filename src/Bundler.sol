@@ -29,17 +29,11 @@ import {PaipaLibrary} from "./PaipaLibrary.sol";
 // TODO: how to work with ERC721 and ERC1155 approvals
 // @dev this contract doesn't support ERC1155 transactions nor payable transactions
 // TODO: maybe convert the contract to support multiple pipes (?)
-contract Pipe is Ownable, Pausable {
+contract Bundler is Ownable, Pausable {
     using BitMaps for BitMaps.BitMap;
     using SafeERC20 for IERC20;
 
-    constructor(address _owner, uint256 _executionInterval) {
-        executionInterval = _executionInterval;
-
-        transferOwnership(_owner);
-    }
-
-    struct PipeNode {
+    struct Transaction {
         address target;
         string functionSignature;
         bytes[] args;
@@ -49,23 +43,28 @@ contract Pipe is Ownable, Pausable {
     // @dev Node ID => BitMap
     mapping(uint256 => BitMaps.BitMap) private argsBitmap;
 
-    PipeNode[] private pipeNodes;
+    Transaction[] private transactions;
     uint256 private lastExecutionTimestamp;
     uint256 private executionInterval;
 
-    error PipeNodeError(uint256 nodeId, bytes result); 
+    error TransactionError(uint256 transactionId, bytes result); 
     error InvalidTarget();
     error ExecutionBeforeInterval();
-    error TransactionError(bytes result);
     error ArgsMismatch();
 
-    function createPipe(
-        PipeNode[] memory _pipeNodes,
+    constructor(address _owner, uint256 _executionInterval) {
+        executionInterval = _executionInterval;
+
+        transferOwnership(_owner);
+    }
+
+    function createBundle(
+        Transaction[] memory _transactions,
         bool[][] calldata _argTypes
     ) external onlyOwner {
-        PipeNode[] storage nodes = pipeNodes;
+        Transaction[] storage nodes = transactions;
 
-        if (_argTypes.length != _pipeNodes.length)
+        if (_argTypes.length != _transactions.length)
             revert ArgsMismatch();
 
         // @dev In order to override the current nodes
@@ -77,10 +76,10 @@ contract Pipe is Ownable, Pausable {
             // using the array index, it throws an index out of bounds.
             // Although that might be safe enough, should test the scenarios where this 
             // can be exploited by using inline assembly
-            delete pipeNodes;
+            delete transactions;
 
-        for (uint256 i = 0; i < _pipeNodes.length;) {
-            PipeNode memory node = _pipeNodes[i];
+        for (uint256 i = 0; i < _transactions.length;) {
+            Transaction memory node = _transactions[i];
             bool[] memory argType = _argTypes[i];
 
             if (argType.length != node.args.length)
@@ -105,8 +104,8 @@ contract Pipe is Ownable, Pausable {
         }
     }
 
-    function getPipe() external view returns (PipeNode[] memory) {
-        return pipeNodes;
+    function getBundle() external view returns (Transaction[] memory) {
+        return transactions;
     }
 
     function argTypeIsDynamic(uint nodeId, uint argId) external view returns (bool) {
@@ -114,18 +113,18 @@ contract Pipe is Ownable, Pausable {
     }
 
     // TODO: time guard
-    function runPipe() external onlyOwner whenNotPaused {
+    function runBundle() external onlyOwner whenNotPaused {
         bytes memory lastNodeResult;
 
-        for (uint8 i; i < pipeNodes.length;)  {
-            PipeNode memory node = pipeNodes[i];
+        for (uint8 i; i < transactions.length;)  {
+            Transaction memory node = transactions[i];
 
             bytes memory data = buildData(i, node, lastNodeResult);
 
             (bool success, bytes memory result) = node.target.call(data);
 
             if (!success)
-                revert TransactionError(result);
+                revert TransactionError(i, result);
 
             lastNodeResult = result;
 
@@ -137,18 +136,18 @@ contract Pipe is Ownable, Pausable {
 
     function buildData(
         uint _nodeId,
-        PipeNode memory _pipeNode,
+        Transaction memory _transaction,
         bytes memory _lastNodeResult
     ) internal view returns (bytes memory data) {
-        data = abi.encodeWithSignature(_pipeNode.functionSignature);
+        data = abi.encodeWithSignature(_transaction.functionSignature);
 
-        for (uint8 i; i < _pipeNode.args.length; ) {
+        for (uint8 i; i < _transaction.args.length; ) {
             if (argsBitmap[_nodeId].get(i)) {
-                uint256 interval = PaipaLibrary.bytesToUint256(_pipeNode.args[i]);
+                uint256 interval = PaipaLibrary.bytesToUint256(_transaction.args[i]);
 
                 data = bytes.concat(data, PaipaLibrary.getSlice(_lastNodeResult, interval));
             } else {
-               data = bytes.concat(data, _pipeNode.args[i]);
+               data = bytes.concat(data, _transaction.args[i]);
             }
 
             unchecked {
@@ -166,7 +165,7 @@ contract Pipe is Ownable, Pausable {
         (bool success, bytes memory result) = target.call(data);
 
         if (!success)
-            revert TransactionError(result);
+            revert TransactionError(0, result);
 
         return result;
     }

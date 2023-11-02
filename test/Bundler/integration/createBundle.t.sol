@@ -16,15 +16,15 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/console.sol";
-import {Pipe} from '../../../src/Pipe.sol';
-import {PipeFixture} from "../../fixtures/PipeFixture.sol";
+import {Bundler} from '../../../src/Bundler.sol';
+import {BundlerFixture} from "../../fixtures/BundlerFixture.sol";
 
 // Current cov: 75.00% (33/44) | 77.36% (41/53) | 56.25% (9/16)  | 55.56% (5/9)
 //              77.27% (34/44) | 79.25% (42/53) | 62.50% (10/16) | 55.56% (5/9)
-contract CreatePipeTest is PipeFixture {
-    Pipe.PipeNode pipeNode0;
-    Pipe.PipeNode pipeNode1;
-    Pipe.PipeNode[] nodes;
+contract CreateBundlerTest is BundlerFixture {
+    Bundler.Transaction bundlerNode0;
+    Bundler.Transaction bundlerNode1;
+    Bundler.Transaction[] transactions;
     bool[][] nodeArgsType;
 
     function setUp() public override {
@@ -33,7 +33,7 @@ contract CreatePipeTest is PipeFixture {
         // NODE 0
         bytes[] memory node0Args = new bytes[](1);
         node0Args[0] = abi.encode(user0);
-        pipeNode0 = Pipe.PipeNode({
+        bundlerNode0 = Bundler.Transaction({
             target: address(mockStake),
             functionSignature: 'balanceOf(address)',
             args: node0Args
@@ -42,7 +42,7 @@ contract CreatePipeTest is PipeFixture {
         // NODE 1
         bytes[] memory node1Args = new bytes[](1);
         node1Args[0] = abi.encode(0);
-        pipeNode1 = Pipe.PipeNode({
+        bundlerNode1 = Bundler.Transaction({
             target: address(mockStake),
             functionSignature: 'withdraw(uint256)',
             args: node1Args
@@ -57,35 +57,35 @@ contract CreatePipeTest is PipeFixture {
         nodeArgsType[0][0] = false;
         nodeArgsType[1][0] = true;
 
-        nodes.push(pipeNode0);
-        nodes.push(pipeNode1);
+        transactions.push(bundlerNode0);
+        transactions.push(bundlerNode1);
     }
 
-    function test_CreatePipeNodes() public {
+    function test_CreateTransactions() public {
         vm.prank(user0);
-        pipe.createPipe(nodes, nodeArgsType);
+        bundler.createBundle(transactions, nodeArgsType);
 
-        assertEq(nodes[0].args[0], abi.encode(user0));
-        assertEq(nodes[0].functionSignature, 'balanceOf(address)');
-        assertEq(nodes[0].target, address(mockStake));
+        assertEq(transactions[0].args[0], abi.encode(user0));
+        assertEq(transactions[0].functionSignature, 'balanceOf(address)');
+        assertEq(transactions[0].target, address(mockStake));
 
-        assertEq(nodes[1].args[0], abi.encode(0));
-        assertEq(nodes[1].functionSignature, 'withdraw(uint256)');
-        assertEq(nodes[1].target, address(mockStake));
+        assertEq(transactions[1].args[0], abi.encode(0));
+        assertEq(transactions[1].functionSignature, 'withdraw(uint256)');
+        assertEq(transactions[1].target, address(mockStake));
     }
 
     function test_InitializeBitmapForNodes() public {
         vm.prank(user0);
-        pipe.createPipe(nodes, nodeArgsType);
+        bundler.createBundle(transactions, nodeArgsType);
 
-        assertEq(pipe.argTypeIsDynamic(0, 0), false);
-        assertEq(pipe.argTypeIsDynamic(1, 0), true);
+        assertEq(bundler.argTypeIsDynamic(0, 0), false);
+        assertEq(bundler.argTypeIsDynamic(1, 0), true);
     }
 
-    function test_OverridePipeWithNewNodes() public {
+    function test_OverrideBundlerWithNewNodes() public {
         bytes[] memory customNodeArgs = new bytes[](1);
         customNodeArgs[0] = abi.encode(0);
-        Pipe.PipeNode memory customNode = Pipe.PipeNode({
+        Bundler.Transaction memory customNode = Bundler.Transaction({
             target: address(3),
             functionSignature: 'customNode(uint256)',
             args: customNodeArgs
@@ -95,32 +95,32 @@ contract CreatePipeTest is PipeFixture {
         customNodeArgsType[0] = new bool[](1);
         customNodeArgsType[0][0] = false;
 
-        Pipe.PipeNode[] memory customPipe = new Pipe.PipeNode[](1);
-        customPipe[0] = customNode;
+        Bundler.Transaction[] memory customBundler = new Bundler.Transaction[](1);
+        customBundler[0] = customNode;
 
         vm.startPrank(user0);
         {
-            // Create first pipe
-            pipe.createPipe(nodes, nodeArgsType);
-            // Overrides the last createPipe call
-            pipe.createPipe(customPipe, customNodeArgsType);
+            // Create first bundler
+            bundler.createBundle(transactions, nodeArgsType);
+            // Overrides the last createBundle call
+            bundler.createBundle(customBundler, customNodeArgsType);
         }
         vm.stopPrank();
 
-        Pipe.PipeNode[] memory pipeNodes = pipe.getPipe();
+        Bundler.Transaction[] memory bundlerNodes = bundler.getBundle();
 
-        assertEq(pipeNodes.length, 1);
-        assertEq(pipeNodes[0].functionSignature, 'customNode(uint256)');
-        assertEq(pipeNodes[0].target, address(3));
-        assertEq0(pipeNodes[0].args[0], abi.encode(0));
+        assertEq(bundlerNodes.length, 1);
+        assertEq(bundlerNodes[0].functionSignature, 'customNode(uint256)');
+        assertEq(bundlerNodes[0].target, address(3));
+        assertEq0(bundlerNodes[0].args[0], abi.encode(0));
     }
 
     function test_RevertWhenArgsNotSameLength() public {
         bool[][] memory customNodeArgsType = new bool[][](0);
 
-        vm.expectRevert(Pipe.ArgsMismatch.selector);
+        vm.expectRevert(Bundler.ArgsMismatch.selector);
         vm.prank(user0);
-        pipe.createPipe(nodes, customNodeArgsType);
+        bundler.createBundle(transactions, customNodeArgsType);
     }
 
     function test_RevertWhenArgsContentNotSameLength() public {
@@ -130,16 +130,16 @@ contract CreatePipeTest is PipeFixture {
         customNodeArgsType[1] = new bool[](0);
         customNodeArgsType[0][0] = false;
 
-        vm.expectRevert(Pipe.ArgsMismatch.selector);
+        vm.expectRevert(Bundler.ArgsMismatch.selector);
         vm.prank(user0);
-        pipe.createPipe(nodes, customNodeArgsType);
+        bundler.createBundle(transactions, customNodeArgsType);
     }
 
     function test_RevertIfInvalidTarget() public {
-        nodes[0].target = address(0);
+        transactions[0].target = address(0);
 
-        vm.expectRevert(Pipe.InvalidTarget.selector);
+        vm.expectRevert(Bundler.InvalidTarget.selector);
         vm.prank(user0);
-        pipe.createPipe(nodes, nodeArgsType);
+        bundler.createBundle(transactions, nodeArgsType);
     }
 }

@@ -12,39 +12,31 @@
                                    ░░░░░         
 */
 
-// SPDX-License-Identifier: MTI
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {Test} from "forge-std/Test.sol";
-import {Pipe} from "../../src/Pipe.sol";
-import {
-    MockContract0,
-    MockContract1,
-    MockStake,
-    MockToken
-} from "../mock/MockContracts.sol";
+import {BundlerFactory} from "../../../src/BundlerFactory.sol";
+import "forge-std/Test.sol";
 
-abstract contract PipeFixture is Test {
-    address public user0;
+contract BundlerDeployerUnitTest is Test {
+    BundlerFactory public factory;
 
-    Pipe public pipe;
-    MockContract0 public mock0;
-    MockContract1 public mock1;
-    MockStake public mockStake;
-    MockToken public mockToken;
+    function setUp() public {
+        factory = new BundlerFactory();
+    }
 
-    function setUp() public virtual {
-        user0 = address(1);
+    function test_DeployBundlerContract() public {
+        address pipeAddress = factory.deployBundler(0);
 
-        vm.prank(user0);
-        pipe = new Pipe(user0, 0);
+        assertTrue(pipeAddress != address(0));
+    }
 
-        mock0 = new MockContract0();
-        mock1 = new MockContract1();
+    function test_RegisterUserBundlerAddresses() public {
+        factory.deployBundler(0);
 
-        mockToken = new MockToken();
-        mockStake = new MockStake(mockToken);
+        address[] memory userBundlers = factory.getUserBundlers(address(this));
 
-        mockToken.transfer(user0, 10e18);
+        assertEq(userBundlers.length, 1);
+        assertTrue(userBundlers[0] != address(0));
     }
 }
