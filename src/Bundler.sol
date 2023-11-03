@@ -13,14 +13,14 @@
 */
 
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.22;
 
 import "forge-std/console.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
-import {Pausable} from "openzeppelin-contracts/contracts/security/Pausable.sol";
+import {Pausable} from "openzeppelin-contracts/contracts/utils/Pausable.sol";
 import {BitMaps} from "openzeppelin-contracts/contracts/utils/structs/BitMaps.sol";
 import {PaipaLibrary} from "./PaipaLibrary.sol";
 
@@ -28,7 +28,7 @@ import {PaipaLibrary} from "./PaipaLibrary.sol";
 
 // TODO: how to work with ERC721 and ERC1155 approvals
 // @dev this contract doesn't support ERC1155 transactions nor payable transactions
-// TODO: maybe convert the contract to support multiple pipes (?)
+// TODO: maybe convert the contract to support multiple bundlers(?)
 contract Bundler is Ownable, Pausable {
     using BitMaps for BitMaps.BitMap;
     using SafeERC20 for IERC20;
@@ -52,10 +52,8 @@ contract Bundler is Ownable, Pausable {
     error ExecutionBeforeInterval();
     error ArgsMismatch();
 
-    constructor(address _owner, uint256 _executionInterval) {
+    constructor(address _owner, uint256 _executionInterval) Ownable(_owner) {
         executionInterval = _executionInterval;
-
-        transferOwnership(_owner);
     }
 
     function createBundle(
