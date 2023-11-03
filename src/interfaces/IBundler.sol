@@ -15,32 +15,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-library PaipaLibrary {
-    error InvalidBytesLength();
-    error InvalidDataOffset();
-
-    function bytesToUint256(bytes memory _bytes) public pure returns (uint256 result) {
-        if (_bytes.length < 32)
-            revert InvalidBytesLength();
-
-        assembly {
-            result := mload(add(_bytes, 0x20))
-        }
+interface IBundler {
+    struct Transaction {
+        address target;
+        string functionSignature;
+        bytes[] args;
     }
 
-    // TODO: need some kind of guard to make sure bytes isn't bigger than 32 bytes
-    function getSlice(bytes memory data, uint256 intervalIndex) public pure returns (bytes32) {
-        uint256 start = intervalIndex * 32;
+    function createBundle(Transaction[] memory _transactions, bool[][] calldata _argTypes) external;
 
-        if(start + 32 > data.length)
-            revert InvalidDataOffset();
+    function runBundle() external;
 
-        bytes32 slice;
+    function runTransaction(address target, bytes calldata data) external returns (bytes memory);
 
-        assembly {
-            slice := mload(add(data, add(start, 32)))
-        }
+    function getBundle() external view returns (Transaction[] memory);
 
-        return slice;
-    }
+    function setExecutionInterval(uint256 _executionInterval) external;
+
+    function withdrawERC20(address _token, uint256 _amount) external;
+
+    function withdraw721(address _token, uint256 _tokenId) external;
 }

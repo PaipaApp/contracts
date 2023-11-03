@@ -4,13 +4,14 @@ pragma solidity ^0.8.22;
 import "forge-std/console.sol";
 import {Bundler} from '../../../src/Bundler.sol';
 import {BundlerFixture} from "../../fixtures/BundlerFixture.sol";
+import {IBundler} from '../../../src/interfaces/IBundler.sol';
 
 // Current cov: 75.00% (33/44) | 77.36% (41/53) | 56.25% (9/16)  | 55.56% (5/9)
 //              77.27% (34/44) | 79.25% (42/53) | 62.50% (10/16) | 55.56% (5/9)
 contract CreateBundlerTest is BundlerFixture {
-    Bundler.Transaction transaction0;
-    Bundler.Transaction transaction1;
-    Bundler.Transaction[] transactions;
+    IBundler.Transaction transaction0;
+    IBundler.Transaction transaction1;
+    IBundler.Transaction[] transactions;
     bool[][] transactionArgsType;
 
     function setUp() public override {
@@ -19,7 +20,7 @@ contract CreateBundlerTest is BundlerFixture {
         // NODE 0
         bytes[] memory transaction0Args = new bytes[](1);
         transaction0Args[0] = abi.encode(user0);
-        transaction0 = Bundler.Transaction({
+        transaction0 = IBundler.Transaction({
             target: address(mockStake),
             functionSignature: 'balanceOf(address)',
             args: transaction0Args
@@ -28,7 +29,7 @@ contract CreateBundlerTest is BundlerFixture {
         // NODE 1
         bytes[] memory transaction1Args = new bytes[](1);
         transaction1Args[0] = abi.encode(0);
-        transaction1 = Bundler.Transaction({
+        transaction1 = IBundler.Transaction({
             target: address(mockStake),
             functionSignature: 'withdraw(uint256)',
             args: transaction1Args
@@ -71,7 +72,7 @@ contract CreateBundlerTest is BundlerFixture {
     function test_OverrideBundlerWithNewTransactions() public {
         bytes[] memory customNodeArgs = new bytes[](1);
         customNodeArgs[0] = abi.encode(0);
-        Bundler.Transaction memory customNode = Bundler.Transaction({
+        IBundler.Transaction memory customNode = IBundler.Transaction({
             target: address(3),
             functionSignature: 'customNode(uint256)',
             args: customNodeArgs
@@ -81,7 +82,7 @@ contract CreateBundlerTest is BundlerFixture {
         customNodeArgsType[0] = new bool[](1);
         customNodeArgsType[0][0] = false;
 
-        Bundler.Transaction[] memory customBundler = new Bundler.Transaction[](1);
+        IBundler.Transaction[] memory customBundler = new IBundler.Transaction[](1);
         customBundler[0] = customNode;
 
         vm.startPrank(user0);
@@ -93,7 +94,7 @@ contract CreateBundlerTest is BundlerFixture {
         }
         vm.stopPrank();
 
-        Bundler.Transaction[] memory bundlerTransactions = bundler.getBundle();
+        IBundler.Transaction[] memory bundlerTransactions = bundler.getBundle();
 
         assertEq(bundlerTransactions.length, 1);
         assertEq(bundlerTransactions[0].functionSignature, 'customNode(uint256)');

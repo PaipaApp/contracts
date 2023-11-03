@@ -1512,8 +1512,8 @@
       }
     },
     "src/Bundler.sol": {
-      "lastModificationDate": 1699024350148,
-      "contentHash": "eb91f6ed2d94bbd977c8670c112296e5",
+      "lastModificationDate": 1699025761902,
+      "contentHash": "72c55d397b455e27bd9681dbd728c639",
       "sourceName": "src/Bundler.sol",
       "solcConfig": {
         "settings": {
@@ -1556,7 +1556,8 @@
         "lib/openzeppelin-contracts/contracts/utils/Pausable.sol",
         "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
         "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
-        "src/PaipaLibrary.sol"
+        "src/interfaces/IBundler.sol",
+        "src/libraries/Helpers.sol"
       ],
       "versionRequirement": "^0.8.22",
       "artifacts": {
@@ -1566,8 +1567,8 @@
       }
     },
     "src/BundlerFactory.sol": {
-      "lastModificationDate": 1699024608900,
-      "contentHash": "68cef6dc81f3b1b1ca4c1cf45ada5b5e",
+      "lastModificationDate": 1699026075508,
+      "contentHash": "a2257db7dc45c32f747bbbd0e2156513",
       "sourceName": "src/BundlerFactory.sol",
       "solcConfig": {
         "settings": {
@@ -1611,7 +1612,9 @@
         "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
         "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
         "src/Bundler.sol",
-        "src/PaipaLibrary.sol"
+        "src/interfaces/IBundler.sol",
+        "src/interfaces/IBundlerFactory.sol",
+        "src/libraries/Helpers.sol"
       ],
       "versionRequirement": "^0.8.22",
       "artifacts": {
@@ -1620,10 +1623,10 @@
         }
       }
     },
-    "src/PaipaLibrary.sol": {
-      "lastModificationDate": 1698982866267,
-      "contentHash": "9eec6c3a3468a1b4cef3e1ec855b42e7",
-      "sourceName": "src/PaipaLibrary.sol",
+    "src/interfaces/IBundler.sol": {
+      "lastModificationDate": 1699025651213,
+      "contentHash": "f10dd4c8977f2108a68322450daded2c",
+      "sourceName": "src/interfaces/IBundler.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
@@ -1656,14 +1659,137 @@
       "imports": [],
       "versionRequirement": "^0.8.22",
       "artifacts": {
-        "PaipaLibrary": {
-          "0.8.22+commit.4fc1097e.Linux.gcc": "PaipaLibrary.sol/PaipaLibrary.json"
+        "IBundler": {
+          "0.8.22+commit.4fc1097e.Linux.gcc": "IBundler.sol/IBundler.json"
+        }
+      }
+    },
+    "src/interfaces/IBundlerFactory.sol": {
+      "lastModificationDate": 1699026035337,
+      "contentHash": "b290ddf4007e77c4248f7f7db043224f",
+      "sourceName": "src/interfaces/IBundlerFactory.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "useLiteralContent": false,
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.22",
+      "artifacts": {
+        "IBundlerFactory": {
+          "0.8.22+commit.4fc1097e.Linux.gcc": "IBundlerFactory.sol/IBundlerFactory.json"
+        }
+      }
+    },
+    "src/interfaces/IBundlerRunner.sol": {
+      "lastModificationDate": 1699025077723,
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "sourceName": "src/interfaces/IBundlerRunner.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "useLiteralContent": false,
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": null,
+      "artifacts": {
+        "IBundlerRunner": {
+          "0.8.22+commit.4fc1097e.Linux.gcc": "IBundlerRunner.sol/IBundlerRunner.json"
+        }
+      }
+    },
+    "src/libraries/Helpers.sol": {
+      "lastModificationDate": 1699024812577,
+      "contentHash": "38cf5bf6688ed372ca13fcff8cbb4d06",
+      "sourceName": "src/libraries/Helpers.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "useLiteralContent": false,
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "paris",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.22",
+      "artifacts": {
+        "Helpers": {
+          "0.8.22+commit.4fc1097e.Linux.gcc": "Helpers.sol/Helpers.json"
         }
       }
     },
     "test/Bundler/integration/createBundle.t.sol": {
-      "lastModificationDate": 1699024419352,
-      "contentHash": "6a99e314ec9e10cb578fc199dde210b0",
+      "lastModificationDate": 1699025860847,
+      "contentHash": "9145261b4a921b2a7ac017245f3b6567",
       "sourceName": "test/Bundler/integration/createBundle.t.sol",
       "solcConfig": {
         "settings": {
@@ -1727,7 +1853,8 @@
         "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
         "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
         "src/Bundler.sol",
-        "src/PaipaLibrary.sol",
+        "src/interfaces/IBundler.sol",
+        "src/libraries/Helpers.sol",
         "test/fixtures/BundlerFixture.sol",
         "test/mock/MockContracts.sol"
       ],
@@ -1739,8 +1866,8 @@
       }
     },
     "test/Bundler/integration/runBundle.t.sol": {
-      "lastModificationDate": 1699021949865,
-      "contentHash": "71254d4952a6b7eed8027d4920c52ffa",
+      "lastModificationDate": 1699025909583,
+      "contentHash": "fbe0f92b76b8729bb847271011a71d27",
       "sourceName": "test/Bundler/integration/runBundle.t.sol",
       "solcConfig": {
         "settings": {
@@ -1804,7 +1931,8 @@
         "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
         "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
         "src/Bundler.sol",
-        "src/PaipaLibrary.sol",
+        "src/interfaces/IBundler.sol",
+        "src/libraries/Helpers.sol",
         "test/fixtures/BundlerFixture.sol",
         "test/mock/MockContracts.sol"
       ],
@@ -1879,7 +2007,9 @@
         "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
         "src/Bundler.sol",
         "src/BundlerFactory.sol",
-        "src/PaipaLibrary.sol"
+        "src/interfaces/IBundler.sol",
+        "src/interfaces/IBundlerFactory.sol",
+        "src/libraries/Helpers.sol"
       ],
       "versionRequirement": "^0.8.22",
       "artifacts": {
@@ -1888,10 +2018,10 @@
         }
       }
     },
-    "test/PaipaLibrary/unit/bytesToUint256.t.sol": {
-      "lastModificationDate": 1698985107593,
-      "contentHash": "c83a745bc319ee00c42d4069c3a35f0f",
-      "sourceName": "test/PaipaLibrary/unit/bytesToUint256.t.sol",
+    "test/Helpers/unit/bytesToUint256.t.sol": {
+      "lastModificationDate": 1699025027522,
+      "contentHash": "d088ca7e78360f57bafcc9356d655513",
+      "sourceName": "test/Helpers/unit/bytesToUint256.t.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
@@ -1940,19 +2070,19 @@
         "lib/forge-std/src/console2.sol",
         "lib/forge-std/src/interfaces/IMulticall3.sol",
         "lib/forge-std/src/safeconsole.sol",
-        "src/PaipaLibrary.sol"
+        "src/libraries/Helpers.sol"
       ],
       "versionRequirement": "^0.8.22",
       "artifacts": {
-        "PaipaLibraryTest": {
-          "0.8.22+commit.4fc1097e.Linux.gcc": "bytesToUint256.t.sol/PaipaLibraryTest.json"
+        "HelpersTest": {
+          "0.8.22+commit.4fc1097e.Linux.gcc": "bytesToUint256.t.sol/HelpersTest.json"
         }
       }
     },
-    "test/PaipaLibrary/unit/getSlice.t.sol": {
+    "test/Helpers/unit/getSlice.t.sol": {
       "lastModificationDate": 1698984006571,
       "contentHash": "f9721529459d3ac6c6a36c52bc5ba085",
-      "sourceName": "test/PaipaLibrary/unit/getSlice.t.sol",
+      "sourceName": "test/Helpers/unit/getSlice.t.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
@@ -2056,7 +2186,8 @@
         "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
         "lib/openzeppelin-contracts/contracts/utils/structs/BitMaps.sol",
         "src/Bundler.sol",
-        "src/PaipaLibrary.sol",
+        "src/interfaces/IBundler.sol",
+        "src/libraries/Helpers.sol",
         "test/mock/MockContracts.sol"
       ],
       "versionRequirement": "^0.8.22",

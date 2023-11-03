@@ -22,22 +22,17 @@ import {IERC721} from "openzeppelin-contracts/contracts/token/ERC721/IERC721.sol
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {Pausable} from "openzeppelin-contracts/contracts/utils/Pausable.sol";
 import {BitMaps} from "openzeppelin-contracts/contracts/utils/structs/BitMaps.sol";
-import {PaipaLibrary} from "./PaipaLibrary.sol";
+import {Helpers} from "./libraries/Helpers.sol";
+import {IBundler} from './interfaces/IBundler.sol';
 
 // TODO: how reentrancy can affect execution
 
 // TODO: how to work with ERC721 and ERC1155 approvals
 // @dev this contract doesn't support ERC1155 transactions nor payable transactions
 // TODO: maybe convert the contract to support multiple bundlers(?)
-contract Bundler is Ownable, Pausable {
+contract Bundler is IBundler, Ownable, Pausable {
     using BitMaps for BitMaps.BitMap;
     using SafeERC20 for IERC20;
-
-    struct Transaction {
-        address target;
-        string functionSignature;
-        bytes[] args;
-    }
 
     // TODO: how to use only Bitmaps for this
     // @dev Transaction ID => BitMap
@@ -78,12 +73,8 @@ contract Bundler is Ownable, Pausable {
             Transaction memory transaction = _transactions[i];
             bool[] memory argType = _argTypes[i];
 
-            if (argType.length != transaction.args.length) {
-                console.log('Arg type length: %s | Transactions args length: %s', argType.length, transaction.args.length);
-                console.log('Reverts on for loop | index: ', i);
-
+            if (argType.length != transaction.args.length)
                 revert ArgsMismatch();
-            }
 
             if (transaction.target == address(0))
                 revert InvalidTarget();
@@ -109,8 +100,6 @@ contract Bundler is Ownable, Pausable {
         bytes memory lastTransactionResult;
 
         for (uint8 i; i < transactions.length; i++)  {
-            console.log('Running tx: ', i);
-
             Transaction memory transaction = transactions[i];
             bytes memory data = buildData(i, transaction, lastTransactionResult);
 
@@ -135,9 +124,9 @@ contract Bundler is Ownable, Pausable {
         for (uint8 i; i < _transaction.args.length; i++) {
             // @dev is dynamic arg
             if (argsBitmap[_transactionId].get(i)) {
-                uint256 interval = PaipaLibrary.bytesToUint256(_transaction.args[i]);
+                uint256 interval = Helpers.bytesToUint256(_transaction.args[i]);
 
-                data = bytes.concat(data, PaipaLibrary.getSlice(_lastTransactionResult, interval));
+                data = bytes.concat(data, Helpers.getSlice(_lastTransactionResult, interval));
             } else {
                data = bytes.concat(data, _transaction.args[i]);
             }
@@ -170,7 +159,7 @@ contract Bundler is Ownable, Pausable {
         IERC20(_token).safeTransfer(owner(), _amount);
     }
 
-    function withdraw721(address _token, uint256 _tokenId) public onlyOwner {
+    function withdraw721(address _token, uint256 _tokenId) external onlyOwner {
         IERC721(_token).safeTransferFrom(address(this), owner(), _tokenId);
     }
 }

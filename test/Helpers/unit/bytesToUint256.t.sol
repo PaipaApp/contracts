@@ -2,9 +2,9 @@
 pragma solidity ^0.8.22;
 
 import {Test} from "forge-std/Test.sol";
-import {PaipaLibrary} from "../../../src/PaipaLibrary.sol";
+import {Helpers} from "../../../src/libraries/Helpers.sol";
 
-contract PaipaLibraryTest is Test {
+contract HelpersTest is Test {
     // TODO: test fail test cases
     // TODO: how to to test libs in foudry, if adds any complexity write about
     function test_GetAbiSlice() public {
@@ -12,17 +12,17 @@ contract PaipaLibraryTest is Test {
 
         assertEq(
             bytes32(uint(32)),
-            PaipaLibrary.getSlice(mockAbi, 0)
+            Helpers.getSlice(mockAbi, 0)
         );
 
         assertEq(
             bytes32(uint(64)),
-            PaipaLibrary.getSlice(mockAbi, 1)
+            Helpers.getSlice(mockAbi, 1)
         );
 
         assertEq(
             bytes32(uint(96)),
-            PaipaLibrary.getSlice(mockAbi, 2)
+            Helpers.getSlice(mockAbi, 2)
         );
     }
 }

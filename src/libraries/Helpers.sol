@@ -15,34 +15,32 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
-import {Bundler} from "./Bundler.sol";
-import {IBundlerFactory} from './interfaces/IBundlerFactory.sol';
+library Helpers {
+    error InvalidBytesLength();
+    error InvalidDataOffset();
 
-contract BundlerFactory is IBundlerFactory, Ownable {
-    mapping(address => address[]) internal userBundlers;
+    function bytesToUint256(bytes memory _bytes) public pure returns (uint256 result) {
+        if (_bytes.length < 32)
+            revert InvalidBytesLength();
 
-    constructor(address _owner) Ownable(_owner) {}
-
-    function deployBundler(uint256 _executionInterval) external returns (address) {
-        Bundler bundler = new Bundler(msg.sender, _executionInterval);
-
-        address bundlerAddress = address(bundler);
-
-        userBundlers[msg.sender].push(bundlerAddress);
-
-        return bundlerAddress;
+        assembly {
+            result := mload(add(_bytes, 0x20))
+        }
     }
 
-    function getUserBundlers(address _user) external view returns (address[] memory) {
-        return userBundlers[_user];
-    }
+    // TODO: need some kind of guard to make sure bytes isn't bigger than 32 bytes
+    function getSlice(bytes memory data, uint256 intervalIndex) public pure returns (bytes32) {
+        uint256 start = intervalIndex * 32;
 
-    function getBundler(address _user, uint256 _bundlerId) external view returns (address) {
-        return userBundlers[_user][_bundlerId];
-    }
+        if(start + 32 > data.length)
+            revert InvalidDataOffset();
 
-    function getUserBundlersLength(address _user) external view returns (uint256) {
-        return userBundlers[_user].length;
+        bytes32 slice;
+
+        assembly {
+            slice := mload(add(data, add(start, 32)))
+        }
+
+        return slice;
     }
 }

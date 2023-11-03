@@ -5,11 +5,12 @@ import {Test} from "forge-std/Test.sol";
 import "forge-std/console.sol";
 import {Bundler} from "../../../src/Bundler.sol";
 import {BundlerFixture} from '../../fixtures/BundlerFixture.sol';
+import {IBundler} from '../../../src/interfaces/IBundler.sol';
 
 contract RunBundlerTest is BundlerFixture {
-    Bundler.Transaction transaction0;
-    Bundler.Transaction transaction1;
-    Bundler.Transaction[] nodes;
+    IBundler.Transaction transaction0;
+    IBundler.Transaction transaction1;
+    IBundler.Transaction[] nodes;
     bool[][] transactionArgsType;
 
     function setUp() public override {
@@ -18,7 +19,7 @@ contract RunBundlerTest is BundlerFixture {
         // NODE 0
         bytes[] memory transaction0Args = new bytes[](1);
         transaction0Args[0] = abi.encode(user0);
-        transaction0 = Bundler.Transaction({
+        transaction0 = IBundler.Transaction({
             target: address(mockStake),
             functionSignature: 'balanceOf(address)',
             args: transaction0Args
@@ -27,7 +28,7 @@ contract RunBundlerTest is BundlerFixture {
         // NODE 1
         bytes[] memory transaction1Args = new bytes[](1);
         transaction1Args[0] = abi.encode(0);
-        transaction1 = Bundler.Transaction({
+        transaction1 = IBundler.Transaction({
             target: address(mockStake),
             functionSignature: 'withdraw(uint256)',
             args: transaction1Args
@@ -54,7 +55,7 @@ contract RunBundlerTest is BundlerFixture {
             mockToken.transfer(address(bundler), depositAmount);
 
             // NODE 0
-            Bundler.Transaction memory customTransaction0 = Bundler.Transaction({
+            IBundler.Transaction memory customTransaction0 = IBundler.Transaction({
                 target: address(mockToken),
                 functionSignature: 'balanceOf(address)',
                 args: new bytes[](1)
@@ -63,7 +64,7 @@ contract RunBundlerTest is BundlerFixture {
 
             // NODE 1
             // Get first 32 bytes of balanceOf and fixed param user0
-            Bundler.Transaction memory customTransaction1 = Bundler.Transaction({
+            IBundler.Transaction memory customTransaction1 = IBundler.Transaction({
                 target: address(mockToken),
                 functionSignature: 'approve(address,uint256)',
                 args: new bytes[](2)
@@ -73,7 +74,7 @@ contract RunBundlerTest is BundlerFixture {
 
             // NODE 2
             // Get first 32 bytes of the data returned from balanceOf
-            Bundler.Transaction memory customTransaction2 = Bundler.Transaction({
+            IBundler.Transaction memory customTransaction2 = IBundler.Transaction({
                 target: address(mockStake),
                 functionSignature: 'deposit(uint256)',
                 args: new bytes[](1)
@@ -93,7 +94,7 @@ contract RunBundlerTest is BundlerFixture {
             customTransactionArgsType[2][0] = false;
             customTransactionArgsType[3][0] = true;
 
-            Bundler.Transaction[] memory transactions = new Bundler.Transaction[](4);
+            IBundler.Transaction[] memory transactions = new IBundler.Transaction[](4);
             transactions[0] = customTransaction0;
             transactions[1] = customTransaction1;
             transactions[2] = customTransaction0;
