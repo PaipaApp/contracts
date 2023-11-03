@@ -40,7 +40,7 @@ contract Bundler is Ownable, Pausable {
     }
 
     // TODO: how to use only Bitmaps for this
-    // @dev Node ID => BitMap
+    // @dev Transaction ID => BitMap
     mapping(uint256 => BitMaps.BitMap) private argsBitmap;
 
     Transaction[] private transactions;
@@ -60,13 +60,14 @@ contract Bundler is Ownable, Pausable {
         Transaction[] memory _transactions,
         bool[][] calldata _argTypes
     ) external onlyOwner {
-        Transaction[] storage nodes = transactions;
+        // TODO: does really costs less gas?
+        Transaction[] storage transactionsRef = transactions;
 
         if (_argTypes.length != _transactions.length)
             revert ArgsMismatch();
 
-        // @dev In order to override the current nodes
-        if (nodes.length > 0)
+        // @dev In order to override the current transactions
+        if (transactionsRef.length > 0)
             // TODO: calling delete on a dynamic array in storage sets the array
             // lenght to zero, but doesn't free the slots used by the array items
             // so this is maybe a problem
@@ -77,20 +78,24 @@ contract Bundler is Ownable, Pausable {
             delete transactions;
 
         for (uint256 i = 0; i < _transactions.length; i++) {
-            Transaction memory node = _transactions[i];
+            Transaction memory transaction = _transactions[i];
             bool[] memory argType = _argTypes[i];
 
-            if (argType.length != node.args.length)
-                revert ArgsMismatch();
+            if (argType.length != transaction.args.length) {
+                console.log('Arg type length: %s | Transactions args length: %s', argType.length, transaction.args.length);
+                console.log('Reverts on for loop | index: ', i);
 
-            if (node.target == address(0))
+                revert ArgsMismatch();
+            }
+
+            if (transaction.target == address(0))
                 revert InvalidTarget();
 
-            for (uint j = 0; j < node.args.length; j++) {
+            for (uint j = 0; j < transaction.args.length; j++) {
                 argsBitmap[i].setTo(j, argType[j]);
             }
 
-            nodes.push(node);
+            transactionsRef.push(transaction);
         }
     }
 
@@ -98,39 +103,44 @@ contract Bundler is Ownable, Pausable {
         return transactions;
     }
 
-    function argTypeIsDynamic(uint nodeId, uint argId) external view returns (bool) {
-        return argsBitmap[nodeId].get(argId);
+    function argTypeIsDynamic(uint transactionId, uint argId) external view returns (bool) {
+        return argsBitmap[transactionId].get(argId);
     }
 
     // TODO: time guard
     function runBundle() external onlyOwner whenNotPaused {
-        bytes memory lastNodeResult;
+        bytes memory lastTransactionResult;
 
         for (uint8 i; i < transactions.length; i++)  {
-            Transaction memory node = transactions[i];
-            bytes memory data = buildData(i, node, lastNodeResult);
+            console.log('Running tx: ', i);
 
-            (bool success, bytes memory result) = node.target.call(data);
+            Transaction memory transaction = transactions[i];
+            bytes memory data = buildData(i, transaction, lastTransactionResult);
+
+            console.logBytes(data);
+
+            (bool success, bytes memory result) = transaction.target.call(data);
 
             if (!success)
                 revert TransactionError(i, result);
 
-            lastNodeResult = result;
+            lastTransactionResult = result;
         }
     }
 
     function buildData(
-        uint _nodeId,
+        uint _transactionId,
         Transaction memory _transaction,
-        bytes memory _lastNodeResult
+        bytes memory _lastTransactionResult
     ) internal view returns (bytes memory data) {
         data = abi.encodeWithSignature(_transaction.functionSignature);
 
-        for (uint8 i; i < _transaction.args.length; ) {
-            if (argsBitmap[_nodeId].get(i)) {
+        for (uint8 i; i < _transaction.args.length; i++) {
+            // @dev is dynamic arg
+            if (argsBitmap[_transactionId].get(i)) {
                 uint256 interval = PaipaLibrary.bytesToUint256(_transaction.args[i]);
 
-                data = bytes.concat(data, PaipaLibrary.getSlice(_lastNodeResult, interval));
+                data = bytes.concat(data, PaipaLibrary.getSlice(_lastTransactionResult, interval));
             } else {
                data = bytes.concat(data, _transaction.args[i]);
             }

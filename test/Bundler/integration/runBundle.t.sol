@@ -46,7 +46,7 @@ contract RunBundlerTest is BundlerFixture {
         nodes.push(transaction1);
     }
 
-    function test_RunNodeWithDynamicArg() public {
+    function test_RunBundleWithDynamicArg() public {
         uint256 depositAmount = 10e18;
 
         vm.startPrank(user0);
@@ -99,7 +99,7 @@ contract RunBundlerTest is BundlerFixture {
             transactions[2] = customTransaction0;
             transactions[3] = customTransaction2;
 
-            bundler.createBundle(transactions, transactionArgsType);
+            bundler.createBundle(transactions, customTransactionArgsType);
             bundler.runBundle();
         }
         vm.stopPrank();
