@@ -76,7 +76,7 @@ contract Bundler is Ownable, Pausable {
             // can be exploited by using inline assembly
             delete transactions;
 
-        for (uint256 i = 0; i < _transactions.length;) {
+        for (uint256 i = 0; i < _transactions.length; i++) {
             Transaction memory node = _transactions[i];
             bool[] memory argType = _argTypes[i];
 
@@ -86,19 +86,12 @@ contract Bundler is Ownable, Pausable {
             if (node.target == address(0))
                 revert InvalidTarget();
 
-            for (uint j = 0; j < node.args.length;) {
+            for (uint j = 0; j < node.args.length; j++) {
                 argsBitmap[i].setTo(j, argType[j]);
 
-                unchecked {
-                    j++;
-                }
             }
 
             nodes.push(node);
-
-            unchecked {
-                i++;
-            }
         }
     }
 

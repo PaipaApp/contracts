@@ -8,48 +8,48 @@ import {BundlerFixture} from "../../fixtures/BundlerFixture.sol";
 // Current cov: 75.00% (33/44) | 77.36% (41/53) | 56.25% (9/16)  | 55.56% (5/9)
 //              77.27% (34/44) | 79.25% (42/53) | 62.50% (10/16) | 55.56% (5/9)
 contract CreateBundlerTest is BundlerFixture {
-    Bundler.Transaction bundlerNode0;
-    Bundler.Transaction bundlerNode1;
+    Bundler.Transaction transaction0;
+    Bundler.Transaction transaction1;
     Bundler.Transaction[] transactions;
-    bool[][] nodeArgsType;
+    bool[][] transactionArgsType;
 
     function setUp() public override {
         super.setUp();
 
         // NODE 0
-        bytes[] memory node0Args = new bytes[](1);
-        node0Args[0] = abi.encode(user0);
-        bundlerNode0 = Bundler.Transaction({
+        bytes[] memory transaction0Args = new bytes[](1);
+        transaction0Args[0] = abi.encode(user0);
+        transaction0 = Bundler.Transaction({
             target: address(mockStake),
             functionSignature: 'balanceOf(address)',
-            args: node0Args
+            args: transaction0Args
         });
 
         // NODE 1
-        bytes[] memory node1Args = new bytes[](1);
-        node1Args[0] = abi.encode(0);
-        bundlerNode1 = Bundler.Transaction({
+        bytes[] memory transaction1Args = new bytes[](1);
+        transaction1Args[0] = abi.encode(0);
+        transaction1 = Bundler.Transaction({
             target: address(mockStake),
             functionSignature: 'withdraw(uint256)',
-            args: node1Args
+            args: transaction1Args
         });
 
         // INITIALIZE NODE ARGS TYPE
-        nodeArgsType = new bool[][](2);
+        transactionArgsType = new bool[][](2);
 
-        nodeArgsType[0] = new bool[](1);
-        nodeArgsType[1] = new bool[](1);
+        transactionArgsType[0] = new bool[](1);
+        transactionArgsType[1] = new bool[](1);
 
-        nodeArgsType[0][0] = false;
-        nodeArgsType[1][0] = true;
+        transactionArgsType[0][0] = false;
+        transactionArgsType[1][0] = true;
 
-        transactions.push(bundlerNode0);
-        transactions.push(bundlerNode1);
+        transactions.push(transaction0);
+        transactions.push(transaction1);
     }
 
     function test_CreateTransactions() public {
         vm.prank(user0);
-        bundler.createBundle(transactions, nodeArgsType);
+        bundler.createBundle(transactions, transactionArgsType);
 
         assertEq(transactions[0].args[0], abi.encode(user0));
         assertEq(transactions[0].functionSignature, 'balanceOf(address)');
@@ -60,15 +60,15 @@ contract CreateBundlerTest is BundlerFixture {
         assertEq(transactions[1].target, address(mockStake));
     }
 
-    function test_InitializeBitmapForNodes() public {
+    function test_InitializeBitmapForTransactions() public {
         vm.prank(user0);
-        bundler.createBundle(transactions, nodeArgsType);
+        bundler.createBundle(transactions, transactionArgsType);
 
         assertEq(bundler.argTypeIsDynamic(0, 0), false);
         assertEq(bundler.argTypeIsDynamic(1, 0), true);
     }
 
-    function test_OverrideBundlerWithNewNodes() public {
+    function test_OverrideBundlerWithNewTransactions() public {
         bytes[] memory customNodeArgs = new bytes[](1);
         customNodeArgs[0] = abi.encode(0);
         Bundler.Transaction memory customNode = Bundler.Transaction({
@@ -87,18 +87,18 @@ contract CreateBundlerTest is BundlerFixture {
         vm.startPrank(user0);
         {
             // Create first bundler
-            bundler.createBundle(transactions, nodeArgsType);
+            bundler.createBundle(transactions, transactionArgsType);
             // Overrides the last createBundle call
             bundler.createBundle(customBundler, customNodeArgsType);
         }
         vm.stopPrank();
 
-        Bundler.Transaction[] memory bundlerNodes = bundler.getBundle();
+        Bundler.Transaction[] memory bundlerTransactions = bundler.getBundle();
 
-        assertEq(bundlerNodes.length, 1);
-        assertEq(bundlerNodes[0].functionSignature, 'customNode(uint256)');
-        assertEq(bundlerNodes[0].target, address(3));
-        assertEq0(bundlerNodes[0].args[0], abi.encode(0));
+        assertEq(bundlerTransactions.length, 1);
+        assertEq(bundlerTransactions[0].functionSignature, 'customNode(uint256)');
+        assertEq(bundlerTransactions[0].target, address(3));
+        assertEq0(bundlerTransactions[0].args[0], abi.encode(0));
     }
 
     function test_RevertWhenArgsNotSameLength() public {
@@ -126,6 +126,6 @@ contract CreateBundlerTest is BundlerFixture {
 
         vm.expectRevert(Bundler.InvalidTarget.selector);
         vm.prank(user0);
-        bundler.createBundle(transactions, nodeArgsType);
+        bundler.createBundle(transactions, transactionArgsType);
     }
 }

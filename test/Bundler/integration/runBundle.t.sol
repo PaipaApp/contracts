@@ -54,53 +54,50 @@ contract RunBundlerTest is BundlerFixture {
             mockToken.transfer(address(bundler), depositAmount);
 
             // NODE 0
-            bytes[] memory transaction0Args = new bytes[](1);
-            transaction0Args[0] = abi.encode(address(bundler));
-            Bundler.Transaction memory transaction0 = Bundler.Transaction({
+            Bundler.Transaction memory customTransaction0 = Bundler.Transaction({
                 target: address(mockToken),
                 functionSignature: 'balanceOf(address)',
-                args: transaction0Args
+                args: new bytes[](1)
             });
+            customTransaction0.args[0] = abi.encode(address(bundler));
 
             // NODE 1
-            bytes[] memory transaction1Args = new bytes[](2);
             // Get first 32 bytes of balanceOf and fixed param user0
-            transaction1Args[0] = abi.encode(address(mockStake));
-            transaction1Args[1] = abi.encode(uint8(0));
-            Bundler.Transaction memory transaction1 = Bundler.Transaction({
+            Bundler.Transaction memory customTransaction1 = Bundler.Transaction({
                 target: address(mockToken),
                 functionSignature: 'approve(address,uint256)',
-                args: transaction1Args
+                args: new bytes[](2)
             });
+            customTransaction1.args[0] = abi.encode(address(mockStake));
+            customTransaction1.args[1] = abi.encode(uint8(0));
 
             // NODE 2
-            bytes[] memory transaction2Args = new bytes[](1);
             // Get first 32 bytes of the data returned from balanceOf
-            transaction2Args[0] = abi.encode(0); 
-            Bundler.Transaction memory transaction2 = Bundler.Transaction({
+            Bundler.Transaction memory customTransaction2 = Bundler.Transaction({
                 target: address(mockStake),
                 functionSignature: 'deposit(uint256)',
-                args: transaction2Args
+                args: new bytes[](1)
             });
+            customTransaction2.args[0] = abi.encode(0); 
 
             // INITIALIZE NODE ARGS TYPE
-            bool[][] memory transactionArgsType = new bool[][](4);
-            transactionArgsType[0] = new bool[](1);
-            transactionArgsType[1] = new bool[](2);
-            transactionArgsType[2] = new bool[](1);
-            transactionArgsType[3] = new bool[](1);
+            bool[][] memory customTransactionArgsType = new bool[][](4);
+            customTransactionArgsType[0] = new bool[](1);
+            customTransactionArgsType[1] = new bool[](2);
+            customTransactionArgsType[2] = new bool[](1);
+            customTransactionArgsType[3] = new bool[](1);
 
-            transactionArgsType[0][0] = false;
-            transactionArgsType[1][0] = false;
-            transactionArgsType[1][1] =  true;
-            transactionArgsType[2][0] = false;
-            transactionArgsType[3][0] = true;
+            customTransactionArgsType[0][0] = false;
+            customTransactionArgsType[1][0] = false;
+            customTransactionArgsType[1][1] =  true;
+            customTransactionArgsType[2][0] = false;
+            customTransactionArgsType[3][0] = true;
 
             Bundler.Transaction[] memory transactions = new Bundler.Transaction[](4);
-            transactions[0] = transaction0;
-            transactions[1] = transaction1;
-            transactions[2] = transaction0;
-            transactions[3] = transaction2;
+            transactions[0] = customTransaction0;
+            transactions[1] = customTransaction1;
+            transactions[2] = customTransaction0;
+            transactions[3] = customTransaction2;
 
             bundler.createBundle(transactions, transactionArgsType);
             bundler.runBundle();

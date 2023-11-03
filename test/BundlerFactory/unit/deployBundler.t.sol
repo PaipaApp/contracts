@@ -8,7 +8,7 @@ contract BundlerDeployerUnitTest is Test {
     BundlerFactory public factory;
 
     function setUp() public {
-        factory = new BundlerFactory();
+        factory = new BundlerFactory(address(this));
     }
 
     function test_DeployBundlerContract() public {
