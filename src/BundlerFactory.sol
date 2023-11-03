@@ -33,7 +33,15 @@ contract BundlerFactory is Ownable {
         return bundlerAddress;
     }
 
-    function getUserBundlers(address user) external view returns (address[] memory) {
-        return userBundlers[user];
+    function getUserBundlers(address _user) external view returns (address[] memory) {
+        return userBundlers[_user];
+    }
+
+    function getBundler(address _user, uint256 _bundlerId) external view returns (address) {
+        return userBundlers[_user][_bundlerId];
+    }
+
+    function getUserBundlersLength(address _user) external view returns (uint256) {
+        return userBundlers[_user].length;
     }
 }

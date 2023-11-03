@@ -60,14 +60,11 @@ contract Bundler is Ownable, Pausable {
         Transaction[] memory _transactions,
         bool[][] calldata _argTypes
     ) external onlyOwner {
-        // TODO: does really costs less gas?
-        Transaction[] storage transactionsRef = transactions;
-
         if (_argTypes.length != _transactions.length)
             revert ArgsMismatch();
 
         // @dev In order to override the current transactions
-        if (transactionsRef.length > 0)
+        if (transactions.length > 0)
             // TODO: calling delete on a dynamic array in storage sets the array
             // lenght to zero, but doesn't free the slots used by the array items
             // so this is maybe a problem
@@ -95,7 +92,7 @@ contract Bundler is Ownable, Pausable {
                 argsBitmap[i].setTo(j, argType[j]);
             }
 
-            transactionsRef.push(transaction);
+            transactions.push(transaction);
         }
     }
 

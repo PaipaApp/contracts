@@ -47,7 +47,7 @@ contract CreateBundlerTest is BundlerFixture {
         transactions.push(transaction1);
     }
 
-    function test_CreateTransactions() public {
+    function test_CreateBundle() public {
         vm.prank(user0);
         bundler.createBundle(transactions, transactionArgsType);
 
