@@ -88,7 +88,6 @@ contract Bundler is Ownable, Pausable {
 
             for (uint j = 0; j < node.args.length; j++) {
                 argsBitmap[i].setTo(j, argType[j]);
-
             }
 
             nodes.push(node);
@@ -107,9 +106,8 @@ contract Bundler is Ownable, Pausable {
     function runBundle() external onlyOwner whenNotPaused {
         bytes memory lastNodeResult;
 
-        for (uint8 i; i < transactions.length;)  {
+        for (uint8 i; i < transactions.length; i++)  {
             Transaction memory node = transactions[i];
-
             bytes memory data = buildData(i, node, lastNodeResult);
 
             (bool success, bytes memory result) = node.target.call(data);
@@ -118,10 +116,6 @@ contract Bundler is Ownable, Pausable {
                 revert TransactionError(i, result);
 
             lastNodeResult = result;
-
-            unchecked {
-                i++;
-            }
         }
     }
 
@@ -140,12 +134,11 @@ contract Bundler is Ownable, Pausable {
             } else {
                data = bytes.concat(data, _transaction.args[i]);
             }
-
-            unchecked {
-                i++;
-            }
         }
     }
+
+    // TODO: this function get the amount 
+    function pullFee() internal {}
 
     // @notice Execute an arbitrary transaction in order for this contract to become
     // the owner of a given position in a given contract
@@ -160,6 +153,7 @@ contract Bundler is Ownable, Pausable {
 
         return result;
     }
+
  
     function setExecutionInterval(uint256 _executionInterval) external onlyOwner {
         executionInterval = _executionInterval;
