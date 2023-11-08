@@ -51,6 +51,10 @@ contract MockToken is ERC20("Mock Token", "MOCK") {
     function mint(address _to, uint256 _amount) external {
         _mint(_to, _amount);
     }
+
+    function approve(address _to, uint256 _amount) public override returns(bool) {
+        approve(_to, _amount);
+    }
 }
 
 contract MockStake {

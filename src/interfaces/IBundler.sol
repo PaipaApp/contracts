@@ -35,4 +35,10 @@ interface IBundler {
     function withdrawERC20(address _token, uint256 _amount) external;
 
     function withdraw721(address _token, uint256 _tokenId) external;
+
+    function getRuns() external view returns (uint256);
+
+    function approveRunner(address _runner) external;
+
+    function revokeRunner(address _runner) external;
 }

@@ -19,6 +19,7 @@ import "forge-std/console.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
+import {AccessControl} from "openzeppelin-contracts/contracts/access/AccessControl.sol";
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {Pausable} from "openzeppelin-contracts/contracts/utils/Pausable.sol";
 import {BitMaps} from "openzeppelin-contracts/contracts/utils/structs/BitMaps.sol";
@@ -30,9 +31,11 @@ import {IBundler} from './interfaces/IBundler.sol';
 // TODO: how to work with ERC721 and ERC1155 approvals
 // @dev this contract doesn't support ERC1155 transactions nor payable transactions
 // TODO: maybe convert the contract to support multiple bundlers(?)
-contract Bundler is IBundler, Ownable, Pausable {
+contract Bundler is IBundler, AccessControl, Pausable {
     using BitMaps for BitMaps.BitMap;
     using SafeERC20 for IERC20;
+
+    bytes32 private constant BUNDLE_RUNNER = keccak256("BUNDLE_RUNNER");
 
     // TODO: how to use only Bitmaps for this
     // @dev Transaction ID => BitMap
@@ -41,20 +44,23 @@ contract Bundler is IBundler, Ownable, Pausable {
     Transaction[] private transactions;
     uint256 private lastExecutionTimestamp;
     uint256 private executionInterval;
+    uint256 private runs;
 
     error TransactionError(uint256 transactionId, bytes result); 
     error InvalidTarget();
     error ExecutionBeforeInterval();
     error ArgsMismatch();
+    error NotAllowedToRunBundle();
 
-    constructor(address _owner, uint256 _executionInterval) Ownable(_owner) {
+    constructor(address _owner, uint256 _executionInterval) {
         executionInterval = _executionInterval;
+        _grantRole(DEFAULT_ADMIN_ROLE, _owner);
     }
 
     function createBundle(
         Transaction[] memory _transactions,
         bool[][] calldata _argTypes
-    ) external onlyOwner {
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if (_argTypes.length != _transactions.length)
             revert ArgsMismatch();
 
@@ -96,15 +102,16 @@ contract Bundler is IBundler, Ownable, Pausable {
     }
 
     // TODO: time guard
-    function runBundle() external onlyOwner whenNotPaused {
+    function runBundle() external whenNotPaused {
+        if (!hasRole(DEFAULT_ADMIN_ROLE, msg.sender) && !hasRole(BUNDLE_RUNNER, msg.sender))
+            revert NotAllowedToRunBundle();
+
         bytes memory lastTransactionResult;
 
         for (uint8 i; i < transactions.length; i++)  {
             Transaction memory transaction = transactions[i];
             bytes memory data = buildData(i, transaction, lastTransactionResult);
-
-            console.logBytes(data);
-
+            
             (bool success, bytes memory result) = transaction.target.call(data);
 
             if (!success)
@@ -112,6 +119,8 @@ contract Bundler is IBundler, Ownable, Pausable {
 
             lastTransactionResult = result;
         }
+
+        runs += 1;
     }
 
     function buildData(
@@ -136,9 +145,10 @@ contract Bundler is IBundler, Ownable, Pausable {
     // TODO: this function get the amount 
     function pullFee() internal {}
 
+    // TODO: add event
     // @notice Execute an arbitrary transaction in order for this contract to become
     // the owner of a given position in a given contract
-    function runTransaction(address target, bytes calldata data) external onlyOwner returns (bytes memory) {
+    function runTransaction(address target, bytes calldata data) external onlyRole(DEFAULT_ADMIN_ROLE) returns (bytes memory) {
         if (target == address(this))
             revert InvalidTarget();
 
@@ -149,17 +159,29 @@ contract Bundler is IBundler, Ownable, Pausable {
 
         return result;
     }
-
  
-    function setExecutionInterval(uint256 _executionInterval) external onlyOwner {
+    // TODO: add event
+    function setExecutionInterval(uint256 _executionInterval) external onlyRole(DEFAULT_ADMIN_ROLE) {
         executionInterval = _executionInterval;
     }
 
-    function withdrawERC20(address _token, uint256 _amount) external onlyOwner {
-        IERC20(_token).safeTransfer(owner(), _amount);
+    function withdrawERC20(address _token, uint256 _amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        IERC20(_token).safeTransfer(msg.sender, _amount);
     }
 
-    function withdraw721(address _token, uint256 _tokenId) external onlyOwner {
-        IERC721(_token).safeTransferFrom(address(this), owner(), _tokenId);
+    function withdraw721(address _token, uint256 _tokenId) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        IERC721(_token).safeTransferFrom(address(this), msg.sender, _tokenId);
+    }
+    
+    function getRuns() external view returns (uint256) {
+        return runs;
+    }
+
+    function approveRunner(address _runner) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        grantRole(BUNDLE_RUNNER, _runner);
+    }
+
+    function revokeRunner(address _runner) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        revokeRole(BUNDLE_RUNNER, _runner);
     }
 }

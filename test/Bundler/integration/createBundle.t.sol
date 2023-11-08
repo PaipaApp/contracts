@@ -6,8 +6,6 @@ import {Bundler} from '../../../src/Bundler.sol';
 import {BundlerFixture} from "../../fixtures/BundlerFixture.sol";
 import {IBundler} from '../../../src/interfaces/IBundler.sol';
 
-// Current cov: 75.00% (33/44) | 77.36% (41/53) | 56.25% (9/16)  | 55.56% (5/9)
-//              77.27% (34/44) | 79.25% (42/53) | 62.50% (10/16) | 55.56% (5/9)
 contract CreateBundlerTest is BundlerFixture {
     IBundler.Transaction transaction0;
     IBundler.Transaction transaction1;
