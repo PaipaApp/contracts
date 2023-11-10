@@ -3,34 +3,13 @@ pragma solidity ^0.8.22;
 
 import "forge-std/console.sol";
 import {Bundler} from "../../../src/Bundler.sol";
-import {TransactionsFixture, TransactionType, TransactionName} from "../../fixtures/TransactionsFixture.sol";
+import {TransactionType, TransactionName} from "../../fixtures/TransactionsFixture.sol";
+import {BundleFixture} from "../../fixtures/BundleFixture.sol";
 import {IBundler} from "../../../src/interfaces/IBundler.sol";
 
-contract CreateBundlerTest is TransactionsFixture {
-    IBundler.Transaction[] public staticBundle;
-    bool[][] public staticBundleArgTypes;
-
-    // @dev It isn't possible to have a fully dynamic bundle, since the first tx
-    // always needs to be static
-    IBundler.Transaction[] public mixedBundle;
-    bool[][] public mixedBundleArgTypes;
-
+contract CreateBundleTest is BundleFixture {
     function setUp() public override {
         super.setUp();
-
-        // Mounting static bundle
-        staticBundle.push(transactions[TransactionType.STATIC][TransactionName.WITHDRAW].tx);
-        // Mounting static bundle arg types
-        staticBundleArgTypes = new bool[][](1);
-        staticBundleArgTypes[0] = transactions[TransactionType.STATIC][TransactionName.WITHDRAW].txArgTypes;
-
-        // Mounting mixed bundle
-        mixedBundle.push(transactions[TransactionType.STATIC][TransactionName.BALANCE_OF].tx);
-        mixedBundle.push(transactions[TransactionType.DYNAMIC][TransactionName.WITHDRAW].tx);
-        // Mounting mixed arg types
-        mixedBundleArgTypes = new bool[][](2);
-        mixedBundleArgTypes[0] = transactions[TransactionType.STATIC][TransactionName.BALANCE_OF].txArgTypes;
-        mixedBundleArgTypes[1] = transactions[TransactionType.DYNAMIC][TransactionName.WITHDRAW].txArgTypes;
     }
 
     function test_CreateStaticBundle() public {
@@ -115,9 +94,10 @@ contract CreateBundlerTest is TransactionsFixture {
     function test_RevertWithFirstTransactionWithDynamicArg() public {
         mixedBundleArgTypes[0][0] = true;
 
-        vm.expectRevert(Bundler.FirstTransactionWithDynamicArg.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(Bundler.FirstTransactionWithDynamicArg.selector, 0)
+        );
         vm.prank(user0);
         bundler.createBundle(mixedBundle, mixedBundleArgTypes);
     }
-
 }

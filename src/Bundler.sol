@@ -51,7 +51,7 @@ contract Bundler is IBundler, AccessControl, Pausable {
     error ExecutionBeforeInterval();
     error ArgsMismatch();
     error NotAllowedToRunBundle();
-    error FirstTransactionWithDynamicArg(uint argIndex);
+    error FirstTransactionWithDynamicArg(uint256 argIndex);
 
     constructor(address _owner, uint256 _executionInterval) {
         executionInterval = _executionInterval;
@@ -64,6 +64,8 @@ contract Bundler is IBundler, AccessControl, Pausable {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         if (_argTypes.length != _transactions.length) {
+            console.log('Args mismatch');
+
             revert ArgsMismatch();
         }
 
@@ -79,30 +81,33 @@ contract Bundler is IBundler, AccessControl, Pausable {
             delete transactions;
         }
 
-        if (_argTypes[0][0]) {
-            for (uint256 i = 0; i < _transactions.length; i++) {
-                Transaction memory transaction = _transactions[i];
-                bool[] memory argType = _argTypes[i];
+        for (uint256 i = 0; i < _transactions.length; i++) {
+            Transaction memory transaction = _transactions[i];
+            bool[] memory argType = _argTypes[i];
 
-                if (argType.length != transaction.args.length) {
-                    revert ArgsMismatch();
-                }
+            if (argType.length != transaction.args.length) {
+                console.log('Args mismatch 2');
 
-                if (transaction.target == address(0)) {
-                    revert InvalidTarget();
-                }
-
-                for (uint256 j = 0; j < transaction.args.length; j++) {
-                    // @dev The first transaction canno receive dynamic arguments
-                    if (i == 0 && argType[j] == true) {
-                        revert FirstTransactionWithDynamicArg(j);
-                    }
-
-                    argsBitmap[i].setTo(j, argType[j]);
-                }
-
-                transactions.push(transaction);
+                revert ArgsMismatch();
             }
+
+            if (transaction.target == address(0)) {
+                console.log('Invalid targ');
+                revert InvalidTarget();
+            }
+
+            for (uint256 j = 0; j < transaction.args.length; j++) {
+                // @dev The first transaction canno receive dynamic arguments
+                if (i == 0 && argType[j] == true) {
+                    console.log('FirstTransactionWithDynamicArg');
+
+                    revert FirstTransactionWithDynamicArg(j);
+                }
+
+                argsBitmap[i].setTo(j, argType[j]);
+            }
+
+            transactions.push(transaction);
         }
     }
 

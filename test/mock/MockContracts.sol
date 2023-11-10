@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
+import "forge-std/console.sol";
 import {ERC20} from "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 
@@ -81,7 +82,7 @@ contract MockStake {
         MockToken(address(mockToken)).mint(msg.sender, balances[msg.sender] * 100 / 10_000);
     }
 
-    function balanceOf(address _user) external view returns (uint256) {
+    function stakeBalance(address _user) external view returns (uint256) {
         return balances[_user];
     }
 }
