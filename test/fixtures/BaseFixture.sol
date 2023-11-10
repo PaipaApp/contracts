@@ -3,17 +3,13 @@ pragma solidity ^0.8.22;
 
 import {Test} from "forge-std/Test.sol";
 import {Bundler} from "../../src/Bundler.sol";
-import {BundlerFactory} from '../../src/BundlerFactory.sol';
-import {BundleRunner} from '../../src/BundleRunner.sol';
-import {
-    MockContract0,
-    MockContract1,
-    MockStake,
-    MockToken
-} from "../mock/MockContracts.sol";
+import {BundlerFactory} from "../../src/BundlerFactory.sol";
+import {BundleRunner} from "../../src/BundleRunner.sol";
+import {MockContract0, MockContract1, MockStake, MockToken} from "../mock/MockContracts.sol";
 
-abstract contract BundlerFixture is Test {
+abstract contract BaseFixture is Test {
     address public user0;
+    address public user1;
     address public runnerOwner;
     address public factoryOwner;
 
@@ -27,8 +23,9 @@ abstract contract BundlerFixture is Test {
 
     function setUp() public virtual {
         user0 = address(1);
-        runnerOwner = address(2);
-        factoryOwner = address(3);
+        user1 = address(2);
+        runnerOwner = address(3);
+        factoryOwner = address(4);
 
         bundler = new Bundler(user0, 0);
         factory = new BundlerFactory(factoryOwner);
@@ -41,5 +38,6 @@ abstract contract BundlerFixture is Test {
         mockStake = new MockStake(mockToken);
 
         mockToken.transfer(user0, 10e18);
+        mockToken.transfer(user1, 10e18);
     }
 }

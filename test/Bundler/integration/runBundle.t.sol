@@ -4,50 +4,21 @@ pragma solidity ^0.8.22;
 import {Test} from "forge-std/Test.sol";
 import "forge-std/console.sol";
 import {Bundler} from "../../../src/Bundler.sol";
-import {BundlerFixture} from '../../fixtures/BundlerFixture.sol';
-import {IBundler} from '../../../src/interfaces/IBundler.sol';
+import {IBundler} from "../../../src/interfaces/IBundler.sol";
+import {TransactionsFixture} from "../../fixtures/TransactionsFixture.sol";
 
-contract RunBundlerTest is BundlerFixture {
-    IBundler.Transaction transaction0;
-    IBundler.Transaction transaction1;
-    IBundler.Transaction[] nodes;
-    bool[][] transactionArgsType;
-
+contract RunBundlerTest is TransactionsFixture {
     function setUp() public override {
         super.setUp();
-
-        // NODE 0
-        bytes[] memory transaction0Args = new bytes[](1);
-        transaction0Args[0] = abi.encode(user0);
-        transaction0 = IBundler.Transaction({
-            target: address(mockStake),
-            functionSignature: 'balanceOf(address)',
-            args: transaction0Args
-        });
-
-        // NODE 1
-        bytes[] memory transaction1Args = new bytes[](1);
-        transaction1Args[0] = abi.encode(0);
-        transaction1 = IBundler.Transaction({
-            target: address(mockStake),
-            functionSignature: 'withdraw(uint256)',
-            args: transaction1Args
-        });
-
-        // INITIALIZE NODE ARGS TYPE
-        transactionArgsType = new bool[][](2);
-
-        transactionArgsType[0] = new bool[](1);
-        transactionArgsType[1] = new bool[](1);
-
-        transactionArgsType[0][0] = false;
-        transactionArgsType[1][0] = true;
-
-        nodes.push(transaction0);
-        nodes.push(transaction1);
     }
 
-    function test_RunBundleWithDynamicArg() public {
+    function test_RunBundleWithStaticArgs() public {
+        vm.startPrank(user0);
+        {}
+        vm.stopPrank();
+    }
+
+    function test_RunBundleWithDynamicArgs() public {
         uint256 depositAmount = 10e18;
 
         vm.startPrank(user0);
@@ -57,7 +28,7 @@ contract RunBundlerTest is BundlerFixture {
             // NODE 0
             IBundler.Transaction memory customTransaction0 = IBundler.Transaction({
                 target: address(mockToken),
-                functionSignature: 'balanceOf(address)',
+                functionSignature: "balanceOf(address)",
                 args: new bytes[](1)
             });
             customTransaction0.args[0] = abi.encode(address(bundler));
@@ -66,20 +37,20 @@ contract RunBundlerTest is BundlerFixture {
             // Get first 32 bytes of balanceOf and fixed param user0
             IBundler.Transaction memory customTransaction1 = IBundler.Transaction({
                 target: address(mockToken),
-                functionSignature: 'approve(address,uint256)',
+                functionSignature: "approve(address,uint256)",
                 args: new bytes[](2)
             });
             customTransaction1.args[0] = abi.encode(address(mockStake));
-            customTransaction1.args[1] = abi.encode(uint8(0));
+            customTransaction1.args[1] = abi.encode(uint256(0));
 
             // NODE 2
             // Get first 32 bytes of the data returned from balanceOf
             IBundler.Transaction memory customTransaction2 = IBundler.Transaction({
                 target: address(mockStake),
-                functionSignature: 'deposit(uint256)',
+                functionSignature: "deposit(uint256)",
                 args: new bytes[](1)
             });
-            customTransaction2.args[0] = abi.encode(0); 
+            customTransaction2.args[0] = abi.encode(0);
 
             // INITIALIZE NODE ARGS TYPE
             bool[][] memory customTransactionArgsType = new bool[][](4);
@@ -90,7 +61,7 @@ contract RunBundlerTest is BundlerFixture {
 
             customTransactionArgsType[0][0] = false;
             customTransactionArgsType[1][0] = false;
-            customTransactionArgsType[1][1] =  true;
+            customTransactionArgsType[1][1] = true;
             customTransactionArgsType[2][0] = false;
             customTransactionArgsType[3][0] = true;
 

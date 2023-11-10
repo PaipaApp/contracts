@@ -1,16 +1,16 @@
 /**
-       ███████████             ███                     
-      ░░███░░░░░███           ░░░                      
-       ░███    ░███  ██████   ████  ████████   ██████  
-       ░██████████  ░░░░░███ ░░███ ░░███░░███ ░░░░░███ 
-       ░███░░░░░░    ███████  ░███  ░███ ░███  ███████ 
-       ░███         ███░░███  ░███  ░███ ░███ ███░░███ 
-       █████       ░░████████ █████ ░███████ ░░████████
-      ░░░░░         ░░░░░░░░ ░░░░░  ░███░░░   ░░░░░░░░ 
-                                    ░███               
-                                    █████              
-                                   ░░░░░         
-*/
+ *        ███████████             ███
+ *       ░░███░░░░░███           ░░░
+ *        ░███    ░███  ██████   ████  ████████   ██████
+ *        ░██████████  ░░░░░███ ░░███ ░░███░░███ ░░░░░███
+ *        ░███░░░░░░    ███████  ░███  ░███ ░███  ███████
+ *        ░███         ███░░███  ░███  ░███ ░███ ███░░███
+ *        █████       ░░████████ █████ ░███████ ░░████████
+ *       ░░░░░         ░░░░░░░░ ░░░░░  ░███░░░   ░░░░░░░░
+ *                                     ░███
+ *                                     █████
+ *                                    ░░░░░
+ */
 
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
@@ -24,7 +24,7 @@ import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {Pausable} from "openzeppelin-contracts/contracts/utils/Pausable.sol";
 import {BitMaps} from "openzeppelin-contracts/contracts/utils/structs/BitMaps.sol";
 import {Helpers} from "./libraries/Helpers.sol";
-import {IBundler} from './interfaces/IBundler.sol';
+import {IBundler} from "./interfaces/IBundler.sol";
 
 // TODO: how reentrancy can affect execution
 
@@ -46,50 +46,63 @@ contract Bundler is IBundler, AccessControl, Pausable {
     uint256 private executionInterval;
     uint256 private runs;
 
-    error TransactionError(uint256 transactionId, bytes result); 
+    error TransactionError(uint256 transactionId, bytes result);
     error InvalidTarget();
     error ExecutionBeforeInterval();
     error ArgsMismatch();
     error NotAllowedToRunBundle();
+    error FirstTransactionWithDynamicArg(uint argIndex);
 
     constructor(address _owner, uint256 _executionInterval) {
         executionInterval = _executionInterval;
         _grantRole(DEFAULT_ADMIN_ROLE, _owner);
     }
 
-    function createBundle(
-        Transaction[] memory _transactions,
-        bool[][] calldata _argTypes
-    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        if (_argTypes.length != _transactions.length)
+    // TODO: first transaction of the bundle cannot be dynamic
+    function createBundle(Transaction[] memory _transactions, bool[][] calldata _argTypes)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        if (_argTypes.length != _transactions.length) {
             revert ArgsMismatch();
+        }
 
         // @dev In order to override the current transactions
-        if (transactions.length > 0)
+        if (transactions.length > 0) {
             // TODO: calling delete on a dynamic array in storage sets the array
             // lenght to zero, but doesn't free the slots used by the array items
             // so this is maybe a problem
             // UNFOLD: as the array size is set to zero, we cannot access the element
             // using the array index, it throws an index out of bounds.
-            // Although that might be safe enough, should test the scenarios where this 
+            // Although that might be safe enough, should test the scenarios where this
             // can be exploited by using inline assembly
             delete transactions;
+        }
 
-        for (uint256 i = 0; i < _transactions.length; i++) {
-            Transaction memory transaction = _transactions[i];
-            bool[] memory argType = _argTypes[i];
+        if (_argTypes[0][0]) {
+            for (uint256 i = 0; i < _transactions.length; i++) {
+                Transaction memory transaction = _transactions[i];
+                bool[] memory argType = _argTypes[i];
 
-            if (argType.length != transaction.args.length)
-                revert ArgsMismatch();
+                if (argType.length != transaction.args.length) {
+                    revert ArgsMismatch();
+                }
 
-            if (transaction.target == address(0))
-                revert InvalidTarget();
+                if (transaction.target == address(0)) {
+                    revert InvalidTarget();
+                }
 
-            for (uint j = 0; j < transaction.args.length; j++) {
-                argsBitmap[i].setTo(j, argType[j]);
+                for (uint256 j = 0; j < transaction.args.length; j++) {
+                    // @dev The first transaction canno receive dynamic arguments
+                    if (i == 0 && argType[j] == true) {
+                        revert FirstTransactionWithDynamicArg(j);
+                    }
+
+                    argsBitmap[i].setTo(j, argType[j]);
+                }
+
+                transactions.push(transaction);
             }
-
-            transactions.push(transaction);
         }
     }
 
@@ -97,25 +110,27 @@ contract Bundler is IBundler, AccessControl, Pausable {
         return transactions;
     }
 
-    function argTypeIsDynamic(uint transactionId, uint argId) external view returns (bool) {
+    function argTypeIsDynamic(uint256 transactionId, uint256 argId) external view returns (bool) {
         return argsBitmap[transactionId].get(argId);
     }
 
     // TODO: time guard
     function runBundle() external whenNotPaused {
-        if (!hasRole(DEFAULT_ADMIN_ROLE, msg.sender) && !hasRole(BUNDLE_RUNNER, msg.sender))
+        if (!hasRole(DEFAULT_ADMIN_ROLE, msg.sender) && !hasRole(BUNDLE_RUNNER, msg.sender)) {
             revert NotAllowedToRunBundle();
+        }
 
         bytes memory lastTransactionResult;
 
-        for (uint8 i; i < transactions.length; i++)  {
+        for (uint8 i; i < transactions.length; i++) {
             Transaction memory transaction = transactions[i];
             bytes memory data = buildData(i, transaction, lastTransactionResult);
-            
+
             (bool success, bytes memory result) = transaction.target.call(data);
 
-            if (!success)
+            if (!success) {
                 revert TransactionError(i, result);
+            }
 
             lastTransactionResult = result;
         }
@@ -123,11 +138,11 @@ contract Bundler is IBundler, AccessControl, Pausable {
         runs += 1;
     }
 
-    function buildData(
-        uint _transactionId,
-        Transaction memory _transaction,
-        bytes memory _lastTransactionResult
-    ) internal view returns (bytes memory data) {
+    function buildData(uint256 _transactionId, Transaction memory _transaction, bytes memory _lastTransactionResult)
+        internal
+        view
+        returns (bytes memory data)
+    {
         data = abi.encodeWithSignature(_transaction.functionSignature);
 
         for (uint8 i; i < _transaction.args.length; i++) {
@@ -137,29 +152,35 @@ contract Bundler is IBundler, AccessControl, Pausable {
 
                 data = bytes.concat(data, Helpers.getSlice(_lastTransactionResult, interval));
             } else {
-               data = bytes.concat(data, _transaction.args[i]);
+                data = bytes.concat(data, _transaction.args[i]);
             }
         }
     }
 
-    // TODO: this function get the amount 
+    // TODO: this function get the amount
     function pullFee() internal {}
 
     // TODO: add event
     // @notice Execute an arbitrary transaction in order for this contract to become
     // the owner of a given position in a given contract
-    function runTransaction(address target, bytes calldata data) external onlyRole(DEFAULT_ADMIN_ROLE) returns (bytes memory) {
-        if (target == address(this))
+    function runTransaction(address target, bytes calldata data)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+        returns (bytes memory)
+    {
+        if (target == address(this)) {
             revert InvalidTarget();
+        }
 
         (bool success, bytes memory result) = target.call(data);
 
-        if (!success)
+        if (!success) {
             revert TransactionError(0, result);
+        }
 
         return result;
     }
- 
+
     // TODO: add event
     function setExecutionInterval(uint256 _executionInterval) external onlyRole(DEFAULT_ADMIN_ROLE) {
         executionInterval = _executionInterval;
@@ -172,9 +193,13 @@ contract Bundler is IBundler, AccessControl, Pausable {
     function withdraw721(address _token, uint256 _tokenId) external onlyRole(DEFAULT_ADMIN_ROLE) {
         IERC721(_token).safeTransferFrom(address(this), msg.sender, _tokenId);
     }
-    
+
     function getRuns() external view returns (uint256) {
         return runs;
+    }
+
+    function getTransactions() external view returns (Transaction[] memory) {
+        return transactions;
     }
 
     function approveRunner(address _runner) external onlyRole(DEFAULT_ADMIN_ROLE) {

@@ -1,16 +1,16 @@
 /**
-       ███████████             ███                     
-      ░░███░░░░░███           ░░░                      
-       ░███    ░███  ██████   ████  ████████   ██████  
-       ░██████████  ░░░░░███ ░░███ ░░███░░███ ░░░░░███ 
-       ░███░░░░░░    ███████  ░███  ░███ ░███  ███████ 
-       ░███         ███░░███  ░███  ░███ ░███ ███░░███ 
-       █████       ░░████████ █████ ░███████ ░░████████
-      ░░░░░         ░░░░░░░░ ░░░░░  ░███░░░   ░░░░░░░░ 
-                                    ░███               
-                                    █████              
-                                   ░░░░░         
-*/
+ * ███████████             ███
+ *       ░░███░░░░░███           ░░░
+ *        ░███    ░███  ██████   ████  ████████   ██████
+ *        ░██████████  ░░░░░███ ░░███ ░░███░░███ ░░░░░███
+ *        ░███░░░░░░    ███████  ░███  ░███ ░███  ███████
+ *        ░███         ███░░███  ░███  ░███ ░███ ███░░███
+ *        █████       ░░████████ █████ ░███████ ░░████████
+ *       ░░░░░         ░░░░░░░░ ░░░░░  ░███░░░   ░░░░░░░░
+ *                                     ░███
+ *                                     █████
+ *                                    ░░░░░
+ */
 
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
@@ -20,8 +20,9 @@ library Helpers {
     error InvalidDataOffset();
 
     function bytesToUint256(bytes memory _bytes) public pure returns (uint256 result) {
-        if (_bytes.length < 32)
+        if (_bytes.length < 32) {
             revert InvalidBytesLength();
+        }
 
         assembly {
             result := mload(add(_bytes, 0x20))
@@ -32,8 +33,9 @@ library Helpers {
     function getSlice(bytes memory data, uint256 intervalIndex) public pure returns (bytes32) {
         uint256 start = intervalIndex * 32;
 
-        if(start + 32 > data.length)
+        if (start + 32 > data.length) {
             revert InvalidDataOffset();
+        }
 
         bytes32 slice;
 

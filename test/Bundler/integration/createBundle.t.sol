@@ -2,110 +2,94 @@
 pragma solidity ^0.8.22;
 
 import "forge-std/console.sol";
-import {Bundler} from '../../../src/Bundler.sol';
-import {BundlerFixture} from "../../fixtures/BundlerFixture.sol";
-import {IBundler} from '../../../src/interfaces/IBundler.sol';
+import {Bundler} from "../../../src/Bundler.sol";
+import {TransactionsFixture, TransactionType, TransactionName} from "../../fixtures/TransactionsFixture.sol";
+import {IBundler} from "../../../src/interfaces/IBundler.sol";
 
-contract CreateBundlerTest is BundlerFixture {
-    IBundler.Transaction transaction0;
-    IBundler.Transaction transaction1;
-    IBundler.Transaction[] transactions;
-    bool[][] transactionArgsType;
+contract CreateBundlerTest is TransactionsFixture {
+    IBundler.Transaction[] public staticBundle;
+    bool[][] public staticBundleArgTypes;
+
+    // @dev It isn't possible to have a fully dynamic bundle, since the first tx
+    // always needs to be static
+    IBundler.Transaction[] public mixedBundle;
+    bool[][] public mixedBundleArgTypes;
 
     function setUp() public override {
         super.setUp();
 
-        // NODE 0
-        bytes[] memory transaction0Args = new bytes[](1);
-        transaction0Args[0] = abi.encode(user0);
-        transaction0 = IBundler.Transaction({
-            target: address(mockStake),
-            functionSignature: 'balanceOf(address)',
-            args: transaction0Args
-        });
+        // Mounting static bundle
+        staticBundle.push(transactions[TransactionType.STATIC][TransactionName.WITHDRAW].tx);
+        // Mounting static bundle arg types
+        staticBundleArgTypes = new bool[][](1);
+        staticBundleArgTypes[0] = transactions[TransactionType.STATIC][TransactionName.WITHDRAW].txArgTypes;
 
-        // NODE 1
-        bytes[] memory transaction1Args = new bytes[](1);
-        transaction1Args[0] = abi.encode(0);
-        transaction1 = IBundler.Transaction({
-            target: address(mockStake),
-            functionSignature: 'withdraw(uint256)',
-            args: transaction1Args
-        });
-
-        // INITIALIZE NODE ARGS TYPE
-        transactionArgsType = new bool[][](2);
-
-        transactionArgsType[0] = new bool[](1);
-        transactionArgsType[1] = new bool[](1);
-
-        transactionArgsType[0][0] = false;
-        transactionArgsType[1][0] = true;
-
-        transactions.push(transaction0);
-        transactions.push(transaction1);
+        // Mounting mixed bundle
+        mixedBundle.push(transactions[TransactionType.STATIC][TransactionName.BALANCE_OF].tx);
+        mixedBundle.push(transactions[TransactionType.DYNAMIC][TransactionName.WITHDRAW].tx);
+        // Mounting mixed arg types
+        mixedBundleArgTypes = new bool[][](2);
+        mixedBundleArgTypes[0] = transactions[TransactionType.STATIC][TransactionName.BALANCE_OF].txArgTypes;
+        mixedBundleArgTypes[1] = transactions[TransactionType.DYNAMIC][TransactionName.WITHDRAW].txArgTypes;
     }
 
-    function test_CreateBundle() public {
+    function test_CreateStaticBundle() public {
         vm.prank(user0);
-        bundler.createBundle(transactions, transactionArgsType);
+        bundler.createBundle(staticBundle, staticBundleArgTypes);
+        IBundler.Transaction[] memory transactions = bundler.getTransactions();
 
-        assertEq(transactions[0].args[0], abi.encode(user0));
-        assertEq(transactions[0].functionSignature, 'balanceOf(address)');
-        assertEq(transactions[0].target, address(mockStake));
-
-        assertEq(transactions[1].args[0], abi.encode(0));
-        assertEq(transactions[1].functionSignature, 'withdraw(uint256)');
-        assertEq(transactions[1].target, address(mockStake));
+        assertEq(transactions[0].args[0], staticBundle[0].args[0]);
+        assertEq(transactions[0].functionSignature, staticBundle[0].functionSignature);
+        assertEq(transactions[0].target, staticBundle[0].target);
     }
 
-    function test_InitializeBitmapForTransactions() public {
+    function test_CreateMixedBundle() public {
         vm.prank(user0);
-        bundler.createBundle(transactions, transactionArgsType);
+        bundler.createBundle(mixedBundle, mixedBundleArgTypes);
+        IBundler.Transaction[] memory transactions = bundler.getTransactions();
+
+        assertEq(transactions[0].args[0], mixedBundle[0].args[0]);
+        assertEq(transactions[0].functionSignature, mixedBundle[0].functionSignature);
+        assertEq(transactions[0].target, mixedBundle[0].target);
+
+        assertEq(transactions[1].args[0], mixedBundle[1].args[0]);
+        assertEq(transactions[1].functionSignature, mixedBundle[1].functionSignature);
+        assertEq(transactions[1].target, mixedBundle[1].target);
+    }
+
+    function test_InitializeArgsTypeBitmap() public {
+        vm.prank(user0);
+        bundler.createBundle(mixedBundle, mixedBundleArgTypes);
 
         assertEq(bundler.argTypeIsDynamic(0, 0), false);
         assertEq(bundler.argTypeIsDynamic(1, 0), true);
     }
 
-    function test_OverrideBundlerWithNewTransactions() public {
-        bytes[] memory customNodeArgs = new bytes[](1);
-        customNodeArgs[0] = abi.encode(0);
-        IBundler.Transaction memory customNode = IBundler.Transaction({
-            target: address(3),
-            functionSignature: 'customNode(uint256)',
-            args: customNodeArgs
-        });
-
-        bool[][] memory customNodeArgsType = new bool[][](1);
-        customNodeArgsType[0] = new bool[](1);
-        customNodeArgsType[0][0] = false;
-
-        IBundler.Transaction[] memory customBundler = new IBundler.Transaction[](1);
-        customBundler[0] = customNode;
-
+    function test_OverrideBundleWithNewTransactions() public {
         vm.startPrank(user0);
         {
-            // Create first bundler
-            bundler.createBundle(transactions, transactionArgsType);
-            // Overrides the last createBundle call
-            bundler.createBundle(customBundler, customNodeArgsType);
+            bundler.createBundle(staticBundle, staticBundleArgTypes);
+            // @dev Overrides the last createBundle call
+            bundler.createBundle(mixedBundle, mixedBundleArgTypes);
         }
         vm.stopPrank();
 
         IBundler.Transaction[] memory bundlerTransactions = bundler.getBundle();
 
-        assertEq(bundlerTransactions.length, 1);
-        assertEq(bundlerTransactions[0].functionSignature, 'customNode(uint256)');
-        assertEq(bundlerTransactions[0].target, address(3));
-        assertEq0(bundlerTransactions[0].args[0], abi.encode(0));
+        assertEq(bundlerTransactions.length, mixedBundle.length);
+        assertEq(bundlerTransactions[0].functionSignature, mixedBundle[0].functionSignature);
+        assertEq(bundlerTransactions[0].target, mixedBundle[0].target);
+        assertEq0(bundlerTransactions[0].args[0], mixedBundle[0].args[0]);
+
+        assertEq(bundlerTransactions[1].functionSignature, mixedBundle[1].functionSignature);
+        assertEq(bundlerTransactions[1].target, mixedBundle[1].target);
+        assertEq0(bundlerTransactions[1].args[0], mixedBundle[1].args[0]);
     }
 
     function test_RevertWhenArgsNotSameLength() public {
-        bool[][] memory customNodeArgsType = new bool[][](0);
-
         vm.expectRevert(Bundler.ArgsMismatch.selector);
         vm.prank(user0);
-        bundler.createBundle(transactions, customNodeArgsType);
+        bundler.createBundle(staticBundle, mixedBundleArgTypes);
     }
 
     function test_RevertWhenArgsContentNotSameLength() public {
@@ -117,14 +101,23 @@ contract CreateBundlerTest is BundlerFixture {
 
         vm.expectRevert(Bundler.ArgsMismatch.selector);
         vm.prank(user0);
-        bundler.createBundle(transactions, customNodeArgsType);
+        bundler.createBundle(mixedBundle, customNodeArgsType);
     }
 
     function test_RevertIfInvalidTarget() public {
-        transactions[0].target = address(0);
+        staticBundle[0].target = address(0);
 
         vm.expectRevert(Bundler.InvalidTarget.selector);
         vm.prank(user0);
-        bundler.createBundle(transactions, transactionArgsType);
+        bundler.createBundle(staticBundle, staticBundleArgTypes);
     }
+
+    function test_RevertWithFirstTransactionWithDynamicArg() public {
+        mixedBundleArgTypes[0][0] = true;
+
+        vm.expectRevert(Bundler.FirstTransactionWithDynamicArg.selector);
+        vm.prank(user0);
+        bundler.createBundle(mixedBundle, mixedBundleArgTypes);
+    }
+
 }

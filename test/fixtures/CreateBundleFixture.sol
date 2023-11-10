@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-import {BundlerFixture} from './BundlerFixture.sol';
-import {IBundler} from '../../src/interfaces/IBundler.sol';
-import {Bundler} from '../../src/Bundler.sol';
-import {MockStake, MockToken} from '../mock/MockContracts.sol';
+import {BaseFixture} from "./BaseFixture.sol";
+import {IBundler} from "../../src/interfaces/IBundler.sol";
+import {Bundler} from "../../src/Bundler.sol";
+import {MockStake, MockToken} from "../mock/MockContracts.sol";
 import "forge-std/console.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 
-abstract contract CreateBundleFixture is BundlerFixture {
+abstract contract CreateBundleFixture is BaseFixture {
     IBundler.Transaction transaction0;
     IBundler.Transaction transaction1;
     IBundler.Transaction[] transactions;
@@ -16,12 +17,20 @@ abstract contract CreateBundleFixture is BundlerFixture {
     function setUp() public virtual override {
         super.setUp();
 
+        _createBundler(user0);
+        _initializeTransactions(user0);
+
+        _createBundler(user1);
+        _initializeTransactions(user1);
+    }
+
+    function _initializeTransactions(address _user) internal {
         // NODE 0
         bytes[] memory transaction0Args = new bytes[](1);
-        transaction0Args[0] = abi.encode(user0);
+        transaction0Args[0] = abi.encode(_user);
         transaction0 = IBundler.Transaction({
             target: address(mockStake),
-            functionSignature: 'balanceOf(address)',
+            functionSignature: "balanceOf(address)",
             args: transaction0Args
         });
 
@@ -30,7 +39,7 @@ abstract contract CreateBundleFixture is BundlerFixture {
         transaction1Args[0] = abi.encode(0);
         transaction1 = IBundler.Transaction({
             target: address(mockStake),
-            functionSignature: 'withdraw(uint256)',
+            functionSignature: "withdraw(uint256)",
             args: transaction1Args
         });
 
@@ -45,24 +54,25 @@ abstract contract CreateBundleFixture is BundlerFixture {
 
         transactions.push(transaction0);
         transactions.push(transaction1);
+    }
 
-        vm.startPrank(user0); {
-            address user0Bundler = factory.deployBundler(0);
+    function _createBundler(address _user) internal {
+        vm.startPrank(_user);
+        {
+            address userBundler = factory.deployBundler(0);
 
-            IBundler(user0Bundler).createBundle(transactions, transactionArgsType);
+            IBundler(userBundler).createBundle(transactions, transactionArgsType);
 
-            mockToken.transfer(user0Bundler, 5e18);
+            mockToken.transfer(userBundler, 5e18);
 
             // Approve
-            IBundler(user0Bundler).runTransaction(
-                address(mockToken), 
-                abi.encodeWithSelector(MockToken.approve.selector, address(mockToken), 5e18)
+            IBundler(userBundler).runTransaction(
+                address(mockToken), abi.encodeWithSelector(IERC20.approve.selector, address(mockStake), 5e18)
             );
 
             // Deposit
-            IBundler(user0Bundler).runTransaction(
-                address(mockStake), 
-                abi.encodeWithSelector(MockStake.deposit.selector, 5e18)
+            IBundler(userBundler).runTransaction(
+                address(mockStake), abi.encodeWithSelector(MockStake.deposit.selector, 5e18)
             );
         }
         vm.stopPrank();

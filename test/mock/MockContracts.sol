@@ -3,7 +3,6 @@ pragma solidity ^0.8.22;
 
 import {ERC20} from "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
-import "forge-std/console.sol";
 
 contract MockContract0 {
     uint256 public counter;
@@ -23,7 +22,7 @@ contract MockContract0 {
 
 contract MockContract1 {
     bool public locked;
-    
+
     function toggleLock() public {
         locked = !locked;
     }
@@ -51,10 +50,6 @@ contract MockToken is ERC20("Mock Token", "MOCK") {
     function mint(address _to, uint256 _amount) external {
         _mint(_to, _amount);
     }
-
-    function approve(address _to, uint256 _amount) public override returns(bool) {
-        approve(_to, _amount);
-    }
 }
 
 contract MockStake {
@@ -70,7 +65,7 @@ contract MockStake {
 
         balances[msg.sender] += _amount;
     }
-    
+
     function withdraw(uint256 _amount) public {
         require(balances[msg.sender] > 0, "User balance is zero");
 
@@ -83,11 +78,10 @@ contract MockStake {
         require(balances[msg.sender] > 0, "Nothing to collect");
 
         // Mint 1% of the balance
-        MockToken(address(mockToken)).mint( msg.sender, balances[msg.sender] * 100 / 10_000);
+        MockToken(address(mockToken)).mint(msg.sender, balances[msg.sender] * 100 / 10_000);
     }
 
     function balanceOf(address _user) external view returns (uint256) {
         return balances[_user];
     }
 }
-

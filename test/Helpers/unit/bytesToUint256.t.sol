@@ -8,21 +8,12 @@ contract HelpersTest is Test {
     // TODO: test fail test cases
     // TODO: how to to test libs in foudry, if adds any complexity write about
     function test_GetAbiSlice() public {
-        bytes memory mockAbi = abi.encode(uint(32), uint8(64), uint8(96));
+        bytes memory mockAbi = abi.encode(uint256(32), uint8(64), uint8(96));
 
-        assertEq(
-            bytes32(uint(32)),
-            Helpers.getSlice(mockAbi, 0)
-        );
+        assertEq(bytes32(uint256(32)), Helpers.getSlice(mockAbi, 0));
 
-        assertEq(
-            bytes32(uint(64)),
-            Helpers.getSlice(mockAbi, 1)
-        );
+        assertEq(bytes32(uint256(64)), Helpers.getSlice(mockAbi, 1));
 
-        assertEq(
-            bytes32(uint(96)),
-            Helpers.getSlice(mockAbi, 2)
-        );
+        assertEq(bytes32(uint256(96)), Helpers.getSlice(mockAbi, 2));
     }
 }
