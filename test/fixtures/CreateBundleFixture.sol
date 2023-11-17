@@ -25,16 +25,16 @@ abstract contract CreateBundleFixture is BaseFixture {
     }
 
     function _initializeTransactions(address _user) internal {
-        // NODE 0
+        // BalanceOf
         bytes[] memory transaction0Args = new bytes[](1);
         transaction0Args[0] = abi.encode(_user);
         transaction0 = IBundler.Transaction({
             target: address(mockStake),
-            functionSignature: "balanceOf(address)",
+            functionSignature: "stakeBalance(address)",
             args: transaction0Args
         });
 
-        // NODE 1
+        // Withdraw
         bytes[] memory transaction1Args = new bytes[](1);
         transaction1Args[0] = abi.encode(0);
         transaction1 = IBundler.Transaction({
@@ -57,22 +57,24 @@ abstract contract CreateBundleFixture is BaseFixture {
     }
 
     function _createBundler(address _user) internal {
+        uint256 tokenAmount = 5e18;
+
         vm.startPrank(_user);
         {
             address userBundler = factory.deployBundler(0);
 
             IBundler(userBundler).createBundle(transactions, transactionArgsType);
 
-            mockToken.transfer(userBundler, 5e18);
+            mockToken.transfer(userBundler, tokenAmount);
 
             // Approve
             IBundler(userBundler).runTransaction(
-                address(mockToken), abi.encodeWithSelector(IERC20.approve.selector, address(mockStake), 5e18)
+                address(mockToken), abi.encodeWithSelector(IERC20.approve.selector, address(mockStake), tokenAmount)
             );
 
             // Deposit
             IBundler(userBundler).runTransaction(
-                address(mockStake), abi.encodeWithSelector(MockStake.deposit.selector, 5e18)
+                address(mockStake), abi.encodeWithSelector(MockStake.deposit.selector, tokenAmount)
             );
         }
         vm.stopPrank();

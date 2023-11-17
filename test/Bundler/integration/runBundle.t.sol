@@ -7,12 +7,13 @@ import {Bundler} from "../../../src/Bundler.sol";
 import {IBundler} from "../../../src/interfaces/IBundler.sol";
 import {BundleFixture} from "../../fixtures/BundleFixture.sol";
 
-contract RunBundlerTest is BundleFixture {
+contract RunBundleIntegraiton is BundleFixture {
     uint256 constant public depositAmount = 5e18;
 
     function setUp() public override {
         super.setUp();
 
+        vm.prank(user0);
         mockToken.transfer(address(bundler), depositAmount);
     }
 

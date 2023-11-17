@@ -59,6 +59,8 @@ contract Bundler is IBundler, AccessControl, Pausable {
     }
 
     // TODO: first transaction of the bundle cannot be dynamic
+    // TODO: add max transacion per bundle
+    // TODO: how to make users pay for the gas usage (?)
     function createBundle(Transaction[] memory _transactions, bool[][] calldata _argTypes)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
