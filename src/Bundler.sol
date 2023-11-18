@@ -27,7 +27,7 @@ import {Helpers} from "./libraries/Helpers.sol";
 import {IBundler} from "./interfaces/IBundler.sol";
 
 // TODO: how reentrancy can affect execution
-
+// TODO: implement a fee cap, so users don't may more than disired for the execution
 // TODO: how to work with ERC721 and ERC1155 approvals
 // @dev this contract doesn't support ERC1155 transactions nor payable transactions
 // TODO: maybe convert the contract to support multiple bundlers(?)
@@ -45,6 +45,9 @@ contract Bundler is IBundler, AccessControl, Pausable {
     uint256 private lastExecutionTimestamp;
     uint256 private executionInterval;
     uint256 private runs;
+    IERC20 public feeToken;
+
+    event SetFeeToken(address oldFeeToken, address newFeeToken);
 
     error TransactionError(uint256 transactionId, bytes result);
     error InvalidTarget();
@@ -87,24 +90,16 @@ contract Bundler is IBundler, AccessControl, Pausable {
             Transaction memory transaction = _transactions[i];
             bool[] memory argType = _argTypes[i];
 
-            if (argType.length != transaction.args.length) {
-                console.log('Args mismatch 2');
-
+            if (argType.length != transaction.args.length)
                 revert ArgsMismatch();
-            }
 
-            if (transaction.target == address(0)) {
-                console.log('Invalid targ');
+            if (transaction.target == address(0))
                 revert InvalidTarget();
-            }
 
             for (uint256 j = 0; j < transaction.args.length; j++) {
                 // @dev The first transaction canno receive dynamic arguments
-                if (i == 0 && argType[j] == true) {
-                    console.log('FirstTransactionWithDynamicArg');
-
+                if (i == 0 && argType[j] == true)
                     revert FirstTransactionWithDynamicArg(j);
-                }
 
                 argsBitmap[i].setTo(j, argType[j]);
             }
@@ -210,10 +205,16 @@ contract Bundler is IBundler, AccessControl, Pausable {
     }
 
     function approveRunner(address _runner) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        grantRole(BUNDLE_RUNNER, _runner);
+        _grantRole(BUNDLE_RUNNER, _runner);
     }
 
     function revokeRunner(address _runner) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        revokeRole(BUNDLE_RUNNER, _runner);
+        _revokeRole(BUNDLE_RUNNER, _runner);
+    }
+
+    function setFeeToken(IERC20 _feeToken) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        emit SetFeeToken(address(feeToken), address(_feeToken));
+
+        feeToken = _feeToken;
     }
 }

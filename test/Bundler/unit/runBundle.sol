@@ -23,9 +23,6 @@ contract RunBundleUnit is BundleFixture {
     }
 
     function test_IncrementRuns() public {
-        bytes32 DEFAULT_ADMIN_ROLE = 0x00;
-        console.log('HAS ADMIN ROLE: ', bundler.hasRole(DEFAULT_ADMIN_ROLE, user0));
-
         vm.prank(user0);
         bundler.runBundle();
 

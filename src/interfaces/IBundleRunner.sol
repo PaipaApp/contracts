@@ -1,5 +1,5 @@
 /**
- * ███████████             ███
+ *        ███████████             ███
  *       ░░███░░░░░███           ░░░
  *        ░███    ░███  ██████   ████  ████████   ██████
  *        ░██████████  ░░░░░███ ░░███ ░░███░░███ ░░░░░███
@@ -16,5 +16,10 @@
 pragma solidity ^0.8.22;
 
 interface IBundleRunner {
-    function runBundles(address[] calldata _bundlers) external;
+    struct BundleExecutionParams {
+        address bundle;
+        uint transactionCost;
+    }
+
+    function runBundles(BundleExecutionParams[] calldata _bundles) external;
 }
