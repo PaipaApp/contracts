@@ -14,7 +14,6 @@ enum TransactionName {
     // MockToken
     BALANCE_OF,
     APPROVE,
-
     // MockStake
     STAKE_BALANCE,
     WITHDRAW,

@@ -25,6 +25,7 @@ import {Pausable} from "openzeppelin-contracts/contracts/utils/Pausable.sol";
 import {BitMaps} from "openzeppelin-contracts/contracts/utils/structs/BitMaps.sol";
 import {Helpers} from "./libraries/Helpers.sol";
 import {IBundler} from "./interfaces/IBundler.sol";
+import {IFeeTokenRegistry} from "./interfaces/IFeeTokenRegistry.sol";
 
 // TODO: how reentrancy can affect execution
 // TODO: implement a fee cap, so users don't may more than disired for the execution
@@ -45,7 +46,9 @@ contract Bundler is IBundler, AccessControl, Pausable {
     uint256 private lastExecutionTimestamp;
     uint256 private executionInterval;
     uint256 private runs;
+
     IERC20 public feeToken;
+    IFeeTokenRegistry public feeTokenRegistry;
 
     event SetFeeToken(address oldFeeToken, address newFeeToken);
 
@@ -55,10 +58,18 @@ contract Bundler is IBundler, AccessControl, Pausable {
     error ArgsMismatch();
     error NotAllowedToRunBundle();
     error FirstTransactionWithDynamicArg(uint256 argIndex);
+    error DisallowedFeeToken(address feeToken);
 
-    constructor(address _owner, uint256 _executionInterval) {
+    constructor(address _owner, uint256 _executionInterval, address _feeToken, IFeeTokenRegistry _feeTokenRegistry) {
         executionInterval = _executionInterval;
         _grantRole(DEFAULT_ADMIN_ROLE, _owner);
+        feeTokenRegistry = _feeTokenRegistry;
+        feeToken = IERC20(
+            feeTokenRegistry.isTokenAllowed(_feeToken)
+            ? _feeToken
+            : feeTokenRegistry.getDefaultFeeToken()
+        );
+
     }
 
     // TODO: first transaction of the bundle cannot be dynamic
@@ -69,7 +80,7 @@ contract Bundler is IBundler, AccessControl, Pausable {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         if (_argTypes.length != _transactions.length) {
-            console.log('Args mismatch');
+            console.log("Args mismatch");
 
             revert ArgsMismatch();
         }
@@ -90,16 +101,19 @@ contract Bundler is IBundler, AccessControl, Pausable {
             Transaction memory transaction = _transactions[i];
             bool[] memory argType = _argTypes[i];
 
-            if (argType.length != transaction.args.length)
+            if (argType.length != transaction.args.length) {
                 revert ArgsMismatch();
+            }
 
-            if (transaction.target == address(0))
+            if (transaction.target == address(0)) {
                 revert InvalidTarget();
+            }
 
             for (uint256 j = 0; j < transaction.args.length; j++) {
                 // @dev The first transaction canno receive dynamic arguments
-                if (i == 0 && argType[j] == true)
+                if (i == 0 && argType[j] == true) {
                     revert FirstTransactionWithDynamicArg(j);
+                }
 
                 argsBitmap[i].setTo(j, argType[j]);
             }
@@ -213,8 +227,13 @@ contract Bundler is IBundler, AccessControl, Pausable {
     }
 
     function setFeeToken(IERC20 _feeToken) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        // TODO: check registry
         emit SetFeeToken(address(feeToken), address(_feeToken));
 
         feeToken = _feeToken;
+    }
+
+    function getFeeToken() external view returns (IERC20) {
+        return feeToken;
     }
 }

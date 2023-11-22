@@ -53,6 +53,18 @@ contract MockToken is ERC20("Mock Token", "MOCK") {
     }
 }
 
+contract MockFeeToken is ERC20("Mock Fee Token", "FEE") {
+    address minter;
+
+    constructor() {
+        _mint(msg.sender, 100e18);
+    }
+
+    function mint(address _to, uint256 _amount) external {
+        _mint(_to, _amount);
+    }
+}
+
 contract MockStake {
     IERC20 public mockToken;
     mapping(address => uint256) public balances;

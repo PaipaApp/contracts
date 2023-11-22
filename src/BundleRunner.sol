@@ -16,7 +16,7 @@
 pragma solidity ^0.8.22;
 
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
-import {IERC20} from 'openzeppelin-contracts/contracts/interfaces/IERC20.sol';
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {IBundleRunner} from "./interfaces/IBundleRunner.sol";
 import {IBundler} from "./interfaces/IBundler.sol";
 import "forge-std/console.sol";
@@ -31,7 +31,7 @@ contract BundleRunner is IBundleRunner, Ownable {
         for (uint8 i = 0; i < _bundleExecutionParams.length; i++) {
             IBundler bundler = IBundler(_bundleExecutionParams[i].bundle);
 
-            IERC20(bundler);
+            // pull fees;
 
             bundler.runBundle();
         }

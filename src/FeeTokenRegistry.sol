@@ -1,14 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-import {Ownable} from 'openzeppelin-contracts/contracts/access/Ownable.sol';
-
-contract FeeTokenRegistry is Ownable{
-    mapping(address => bool) public allowedFeeTokens;
+import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
+import {IFeeTokenRegistry} from "./interfaces/IFeeTokenRegistry.sol";
+ 
+contract FeeTokenRegistry is IFeeTokenRegistry, Ownable {
+    mapping(address => bool) internal allowedFeeTokens;
+    address public defaultFeeToken;
 
     event UpdateTokensPermission(address[] tokens, bool permission);
 
-    constructor(address _owner, address[] memory _tokens) Ownable(_owner) {
+    constructor(address _owner, address[] memory _tokens, address _defaultFeeToken) Ownable(_owner) {
+        defaultFeeToken = _defaultFeeToken;
         batchUpdateTokensPermission(_tokens, true);
     }
 
@@ -26,5 +29,9 @@ contract FeeTokenRegistry is Ownable{
         }
 
         emit UpdateTokensPermission(_tokens, _isAllowed);
+    }
+
+    function isTokenAllowed(address _token) external view returns (bool) {
+        return allowedFeeTokens[_token];
     }
 }

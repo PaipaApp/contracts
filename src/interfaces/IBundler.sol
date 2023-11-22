@@ -15,6 +15,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+
 interface IBundler {
     struct Transaction {
         address target;
@@ -41,4 +43,9 @@ interface IBundler {
     function approveRunner(address _runner) external;
 
     function revokeRunner(address _runner) external;
+
+    function setFeeToken(IERC20 _feeToken) external;
+
+    function getFeeToken() external view returns (IERC20);
+
 }

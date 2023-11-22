@@ -61,7 +61,7 @@ abstract contract CreateBundleFixture is BaseFixture {
 
         vm.startPrank(_user);
         {
-            address userBundler = factory.deployBundler(0);
+            address userBundler = factory.deployBundler(0, address(mockFeeToken));
 
             IBundler(userBundler).createBundle(transactions, transactionArgsType);
 
