@@ -30,8 +30,14 @@ contract BundleRunner is IBundleRunner, Ownable {
     function runBundles(BundleExecutionParams[] calldata _bundleExecutionParams) external onlyOwner {
         for (uint8 i = 0; i < _bundleExecutionParams.length; i++) {
             IBundler bundler = IBundler(_bundleExecutionParams[i].bundle);
+            
+            uint256 transactionCostInFeeToken = _bundleExecutionParams[i].transactionCost;
 
-            // pull fees;
+            bundler.getFeeToken().transferFrom(
+                address(bundler),
+                address(this),
+                transactionCostInFeeToken
+            );
 
             bundler.runBundle();
         }

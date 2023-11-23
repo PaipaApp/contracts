@@ -46,6 +46,7 @@ contract Bundler is IBundler, AccessControl, Pausable {
     uint256 private lastExecutionTimestamp;
     uint256 private executionInterval;
     uint256 private runs;
+    address private bundleRunner;
 
     IERC20 public feeToken;
     IFeeTokenRegistry public feeTokenRegistry;
@@ -61,15 +62,14 @@ contract Bundler is IBundler, AccessControl, Pausable {
     error DisallowedFeeToken(address feeToken);
 
     constructor(address _owner, uint256 _executionInterval, address _feeToken, IFeeTokenRegistry _feeTokenRegistry) {
-        executionInterval = _executionInterval;
         _grantRole(DEFAULT_ADMIN_ROLE, _owner);
+        executionInterval = _executionInterval;
         feeTokenRegistry = _feeTokenRegistry;
         feeToken = IERC20(
             feeTokenRegistry.isTokenAllowed(_feeToken)
             ? _feeToken
             : feeTokenRegistry.getDefaultFeeToken()
         );
-
     }
 
     // TODO: first transaction of the bundle cannot be dynamic
@@ -79,11 +79,8 @@ contract Bundler is IBundler, AccessControl, Pausable {
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        if (_argTypes.length != _transactions.length) {
-            console.log("Args mismatch");
-
+        if (_argTypes.length != _transactions.length)
             revert ArgsMismatch();
-        }
 
         // @dev In order to override the current transactions
         if (transactions.length > 0) {
@@ -101,19 +98,16 @@ contract Bundler is IBundler, AccessControl, Pausable {
             Transaction memory transaction = _transactions[i];
             bool[] memory argType = _argTypes[i];
 
-            if (argType.length != transaction.args.length) {
+            if (argType.length != transaction.args.length)
                 revert ArgsMismatch();
-            }
 
-            if (transaction.target == address(0)) {
+            if (transaction.target == address(0))
                 revert InvalidTarget();
-            }
 
             for (uint256 j = 0; j < transaction.args.length; j++) {
-                // @dev The first transaction canno receive dynamic arguments
-                if (i == 0 && argType[j] == true) {
+                // @dev The first transaction cannot receive dynamic arguments
+                if (i == 0 && argType[j] == true)
                     revert FirstTransactionWithDynamicArg(j);
-                }
 
                 argsBitmap[i].setTo(j, argType[j]);
             }
@@ -144,9 +138,8 @@ contract Bundler is IBundler, AccessControl, Pausable {
 
             (bool success, bytes memory result) = transaction.target.call(data);
 
-            if (!success) {
+            if (!success)
                 revert TransactionError(i, result);
-            }
 
             lastTransactionResult = result;
         }
@@ -165,7 +158,6 @@ contract Bundler is IBundler, AccessControl, Pausable {
             // @dev is dynamic arg
             if (argsBitmap[_transactionId].get(i)) {
                 uint256 interval = Helpers.bytesToUint256(_transaction.args[i]);
-
                 data = bytes.concat(data, Helpers.getSlice(_lastTransactionResult, interval));
             } else {
                 data = bytes.concat(data, _transaction.args[i]);
@@ -184,15 +176,13 @@ contract Bundler is IBundler, AccessControl, Pausable {
         onlyRole(DEFAULT_ADMIN_ROLE)
         returns (bytes memory)
     {
-        if (target == address(this)) {
+        if (target == address(this))
             revert InvalidTarget();
-        }
 
         (bool success, bytes memory result) = target.call(data);
 
-        if (!success) {
+        if (!success)
             revert TransactionError(0, result);
-        }
 
         return result;
     }
@@ -200,6 +190,11 @@ contract Bundler is IBundler, AccessControl, Pausable {
     // TODO: add event
     function setExecutionInterval(uint256 _executionInterval) external onlyRole(DEFAULT_ADMIN_ROLE) {
         executionInterval = _executionInterval;
+    }
+
+    function depositFeeToken(uint256 _amount) external {
+        feeToken.transferFrom(msg.sender, address(this), _amount);
+        feeToken.approve(bundleRunner, _amount);
     }
 
     function withdrawERC20(address _token, uint256 _amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -218,19 +213,25 @@ contract Bundler is IBundler, AccessControl, Pausable {
         return transactions;
     }
 
-    function approveRunner(address _runner) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        _grantRole(BUNDLE_RUNNER, _runner);
+    // TODO: emit event
+    function approveBundleRunner(address _bundleRunner) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _grantRole(BUNDLE_RUNNER, _bundleRunner);
+        bundleRunner = _bundleRunner;
     }
 
-    function revokeRunner(address _runner) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    // TODO: emit event
+    function revokeBundleRunner(address _runner) external onlyRole(DEFAULT_ADMIN_ROLE) {
         _revokeRole(BUNDLE_RUNNER, _runner);
+        bundleRunner = address(0);
     }
 
-    function setFeeToken(IERC20 _feeToken) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        // TODO: check registry
-        emit SetFeeToken(address(feeToken), address(_feeToken));
+    function setFeeToken(address _feeToken) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        if (feeTokenRegistry.isTokenAllowed(_feeToken))
+            revert DisallowedFeeToken(_feeToken);
 
-        feeToken = _feeToken;
+        emit SetFeeToken(address(feeToken), _feeToken);
+
+        feeToken = IERC20(_feeToken);
     }
 
     function getFeeToken() external view returns (IERC20) {

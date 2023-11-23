@@ -34,4 +34,8 @@ contract FeeTokenRegistry is IFeeTokenRegistry, Ownable {
     function isTokenAllowed(address _token) external view returns (bool) {
         return allowedFeeTokens[_token];
     }
+
+    function getDefaultFeeToken() external view returns (address) {
+        return defaultFeeToken;
+    }
 }

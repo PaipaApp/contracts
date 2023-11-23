@@ -44,7 +44,7 @@ interface IBundler {
 
     function revokeRunner(address _runner) external;
 
-    function setFeeToken(IERC20 _feeToken) external;
+    function setFeeToken(address _feeToken) external;
 
     function getFeeToken() external view returns (IERC20);
 
