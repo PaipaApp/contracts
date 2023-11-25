@@ -4,6 +4,7 @@ pragma solidity ^0.8.22;
 import "forge-std/console.sol";
 import {CreateBundleFixture} from "../../fixtures/CreateBundleFixture.sol";
 import {BundleRunner} from "../../../src/BundleRunner.sol";
+import {IBundleRunner} from "../../../src/interfaces/IBundleRunner.sol";
 import {IBundler} from "../../../src/interfaces/IBundler.sol";
 
 contract RunBundlesTest is CreateBundleFixture {
@@ -17,15 +18,18 @@ contract RunBundlesTest is CreateBundleFixture {
         user1Bundle = factory.getBundler(user1, 0);
 
         vm.prank(user0);
-        IBundler(user0Bundle).approveRunner(address(runner));
+        IBundler(user0Bundle).approveBundleRunner(address(runner));
 
         vm.prank(user1);
-        IBundler(user1Bundle).approveRunner(address(runner));
+        IBundler(user1Bundle).approveBundleRunner(address(runner));
     }
 
     function test_RunSingleBundle() public {
-        address[] memory bundles = new address[](1);
-        bundles[0] = user0Bundle;
+        IBundleRunner.BundleExecutionParams[] memory bundles = new IBundleRunner.BundleExecutionParams[](1);
+        bundles[0] = IBundleRunner.BundleExecutionParams(
+            user0Bundle,
+            1000000000000000 
+        );
 
         vm.prank(runnerOwner);
         runner.runBundles(bundles);
@@ -33,10 +37,13 @@ contract RunBundlesTest is CreateBundleFixture {
         assertEq(IBundler(user0Bundle).getRuns(), uint256(1));
     }
 
+    // TODO: add one more tx to bundle
     function test_RunMultipleBundles() public {
-        address[] memory bundles = new address[](2);
-        bundles[0] = user0Bundle;
-        bundles[1] = user1Bundle;
+        IBundleRunner.BundleExecutionParams[] memory bundles = new IBundleRunner.BundleExecutionParams[](1);
+        bundles[0] = IBundleRunner.BundleExecutionParams(
+            user0Bundle,
+            1000000000000000
+        );
 
         vm.prank(runnerOwner);
         runner.runBundles(bundles);
@@ -44,4 +51,6 @@ contract RunBundlesTest is CreateBundleFixture {
         assertEq(IBundler(user0Bundle).getRuns(), uint256(1));
         assertEq(IBundler(user1Bundle).getRuns(), uint256(1));
     }
+
+    function test_RevertOnDisallowedFeeToken() public {}
 }

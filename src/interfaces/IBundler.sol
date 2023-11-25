@@ -40,12 +40,13 @@ interface IBundler {
 
     function getRuns() external view returns (uint256);
 
-    function approveRunner(address _runner) external;
+    function approveBundleRunner(address _runner) external;
 
-    function revokeRunner(address _runner) external;
+    function revokeBundleRunner(address _runner) external;
 
     function setFeeToken(address _feeToken) external;
 
     function getFeeToken() external view returns (IERC20);
 
+    function depositFeeToken(uint256 _amount) external;
 }

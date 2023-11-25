@@ -65,11 +65,9 @@ contract Bundler is IBundler, AccessControl, Pausable {
         _grantRole(DEFAULT_ADMIN_ROLE, _owner);
         executionInterval = _executionInterval;
         feeTokenRegistry = _feeTokenRegistry;
-        feeToken = IERC20(
-            feeTokenRegistry.isTokenAllowed(_feeToken)
-            ? _feeToken
-            : feeTokenRegistry.getDefaultFeeToken()
-        );
+        feeToken = feeTokenRegistry.isTokenAllowed(address(_feeToken))
+            ? IERC20(_feeToken)
+            : feeTokenRegistry.getDefaultFeeTokenInfo().token;
     }
 
     // TODO: first transaction of the bundle cannot be dynamic

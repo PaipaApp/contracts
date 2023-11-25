@@ -4,6 +4,7 @@ pragma solidity ^0.8.22;
 import "forge-std/console.sol";
 import {ERC20} from "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
+import {AggregatorV3Interface} from "chainlink-brownie-contracts/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract MockContract0 {
     uint256 public counter;
@@ -90,11 +91,67 @@ contract MockStake {
     function collectRewards() public {
         require(balances[msg.sender] > 0, "Nothing to collect");
 
-        // Mint 1% of the balance
+        // @dev Mint 1% of the balance
         MockToken(address(mockToken)).mint(msg.sender, balances[msg.sender] * 100 / 10_000);
     }
 
     function stakeBalance(address _user) external view returns (uint256) {
         return balances[_user];
+    }
+}
+
+// @dev ETH/USD mock price feed fixed in U$ 2103.94
+contract MockPriceFeed is AggregatorV3Interface {
+    uint8 public decimals;
+    string public description;
+    uint256 public version;
+
+    constructor() {
+        decimals = 8;
+        description = "ETH/USD price feed";
+        version = 1;
+    }
+
+  // getRoundData and latestRoundData should both raise "No data present"
+  // if they do not have data to report, instead of returning unset values
+  // which could be misinterpreted as actual reported values.
+  function getRoundData(
+    uint80 _roundId
+  )
+    external
+    pure
+    returns (
+      uint80 roundId,
+      int256 answer,
+      uint256 startedAt,
+      uint256 updatedAt,
+      uint80 answeredInRound
+    ) {
+        return (
+            110680464442257317888,
+            210394779400,
+            1700834135,
+            1700834135,
+            110680464442257317888
+        );
+    }
+
+  function latestRoundData()
+    external
+    pure
+    returns (
+      uint80 roundId,
+      int256 answer,
+      uint256 startedAt,
+      uint256 updatedAt,
+      uint80 answeredInRound
+    ) {
+        return (
+            110680464442257317888,
+            210394779400,
+            1700834135,
+            1700834135,
+            110680464442257317888
+        );
     }
 }

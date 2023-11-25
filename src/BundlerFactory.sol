@@ -16,6 +16,7 @@
 pragma solidity ^0.8.22;
 
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {Bundler} from "./Bundler.sol";
 import {IBundlerFactory} from "./interfaces/IBundlerFactory.sol";
 import {IFeeTokenRegistry} from "./interfaces/IFeeTokenRegistry.sol";

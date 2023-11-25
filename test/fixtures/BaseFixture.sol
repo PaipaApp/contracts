@@ -6,7 +6,15 @@ import {Bundler} from "../../src/Bundler.sol";
 import {BundlerFactory} from "../../src/BundlerFactory.sol";
 import {BundleRunner} from "../../src/BundleRunner.sol";
 import {FeeTokenRegistry} from "../../src/FeeTokenRegistry.sol";
-import {MockContract0, MockContract1, MockStake, MockToken, MockFeeToken} from "../mock/MockContracts.sol";
+import {IFeeTokenRegistry} from "../../src/interfaces/IFeeTokenRegistry.sol";
+import {
+    MockContract0,
+    MockContract1,
+    MockStake,
+    MockToken,
+    MockFeeToken,
+    MockPriceFeed
+} from "../mock/MockContracts.sol";
 
 abstract contract BaseFixture is Test {
     address public user0;
@@ -24,6 +32,7 @@ abstract contract BaseFixture is Test {
     MockStake public mockStake;
     MockToken public mockToken;
     MockFeeToken public mockFeeToken;
+    MockPriceFeed public mockPriceFeed;
 
     function setUp() public virtual {
         user0 = address(1);
@@ -37,14 +46,25 @@ abstract contract BaseFixture is Test {
         mockToken = new MockToken();
         mockFeeToken = new MockFeeToken();
         mockStake = new MockStake(mockToken);
+        mockPriceFeed = new MockPriceFeed();
 
-        address[] memory allowedTokens = new address[](1);
-        allowedTokens[0] = address(mockToken);
+        IFeeTokenRegistry.TokenInfo[] memory allowedTokens = new IFeeTokenRegistry.TokenInfo[](1);
+        allowedTokens[0] = IFeeTokenRegistry.TokenInfo(
+            mockToken,
+            mockPriceFeed
+        );
 
-        feeTokenRegistry = new FeeTokenRegistry(feeRegistryOwner, allowedTokens, address(mockToken));
+        feeTokenRegistry = new FeeTokenRegistry(
+            feeRegistryOwner,
+            allowedTokens,
+            IFeeTokenRegistry.TokenInfo(
+                mockToken,
+                mockPriceFeed
+            )
+        );
         bundler = new Bundler(user0, 0, address(mockToken),  feeTokenRegistry);
         factory = new BundlerFactory(factoryOwner, feeTokenRegistry);
-        runner = new BundleRunner(runnerOwner);
+        runner = new BundleRunner(runnerOwner, feeTokenRegistry);
 
         mockToken.transfer(user0, 10e18);
         mockToken.transfer(user1, 10e18);
