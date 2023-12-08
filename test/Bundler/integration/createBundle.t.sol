@@ -94,9 +94,7 @@ contract CreateBundleTest is BundleFixture {
     function test_RevertWithFirstTransactionWithDynamicArg() public {
         mixedBundleArgTypes[0][0] = true;
 
-        vm.expectRevert(
-            abi.encodeWithSelector(Bundler.FirstTransactionWithDynamicArg.selector, 0)
-        );
+        vm.expectRevert(abi.encodeWithSelector(Bundler.FirstTransactionWithDynamicArg.selector, 0));
         vm.prank(user0);
         bundler.createBundle(mixedBundle, mixedBundleArgTypes);
     }

@@ -25,9 +25,10 @@ import {Pausable} from "openzeppelin-contracts/contracts/utils/Pausable.sol";
 import {BitMaps} from "openzeppelin-contracts/contracts/utils/structs/BitMaps.sol";
 import {Helpers} from "./libraries/Helpers.sol";
 import {IBundler} from "./interfaces/IBundler.sol";
+import {IFeeTokenRegistry} from "./interfaces/IFeeTokenRegistry.sol";
 
 // TODO: how reentrancy can affect execution
-
+// TODO: implement a fee cap, so users don't may more than disired for the execution
 // TODO: how to work with ERC721 and ERC1155 approvals
 // @dev this contract doesn't support ERC1155 transactions nor payable transactions
 // TODO: maybe convert the contract to support multiple bundlers(?)
@@ -45,6 +46,12 @@ contract Bundler is IBundler, AccessControl, Pausable {
     uint256 private lastExecutionTimestamp;
     uint256 private executionInterval;
     uint256 private runs;
+    address private bundleRunner;
+
+    IERC20 public feeToken;
+    IFeeTokenRegistry public feeTokenRegistry;
+
+    event SetFeeToken(address oldFeeToken, address newFeeToken);
 
     error TransactionError(uint256 transactionId, bytes result);
     error InvalidTarget();
@@ -52,10 +59,15 @@ contract Bundler is IBundler, AccessControl, Pausable {
     error ArgsMismatch();
     error NotAllowedToRunBundle();
     error FirstTransactionWithDynamicArg(uint256 argIndex);
+    error DisallowedFeeToken(address feeToken);
 
-    constructor(address _owner, uint256 _executionInterval) {
-        executionInterval = _executionInterval;
+    constructor(address _owner, uint256 _executionInterval, address _feeToken, IFeeTokenRegistry _feeTokenRegistry) {
         _grantRole(DEFAULT_ADMIN_ROLE, _owner);
+        executionInterval = _executionInterval;
+        feeTokenRegistry = _feeTokenRegistry;
+        feeToken = feeTokenRegistry.isTokenAllowed(address(_feeToken))
+            ? IERC20(_feeToken)
+            : IERC20(feeTokenRegistry.getDefaultFeeToken().token);
     }
 
     // TODO: first transaction of the bundle cannot be dynamic
@@ -65,11 +77,8 @@ contract Bundler is IBundler, AccessControl, Pausable {
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        if (_argTypes.length != _transactions.length) {
-            console.log('Args mismatch');
-
+        if (_argTypes.length != _transactions.length)
             revert ArgsMismatch();
-        }
 
         // @dev In order to override the current transactions
         if (transactions.length > 0) {
@@ -87,24 +96,16 @@ contract Bundler is IBundler, AccessControl, Pausable {
             Transaction memory transaction = _transactions[i];
             bool[] memory argType = _argTypes[i];
 
-            if (argType.length != transaction.args.length) {
-                console.log('Args mismatch 2');
-
+            if (argType.length != transaction.args.length)
                 revert ArgsMismatch();
-            }
 
-            if (transaction.target == address(0)) {
-                console.log('Invalid targ');
+            if (transaction.target == address(0))
                 revert InvalidTarget();
-            }
 
             for (uint256 j = 0; j < transaction.args.length; j++) {
-                // @dev The first transaction canno receive dynamic arguments
-                if (i == 0 && argType[j] == true) {
-                    console.log('FirstTransactionWithDynamicArg');
-
+                // @dev The first transaction cannot receive dynamic arguments
+                if (i == 0 && argType[j] == true)
                     revert FirstTransactionWithDynamicArg(j);
-                }
 
                 argsBitmap[i].setTo(j, argType[j]);
             }
@@ -135,9 +136,8 @@ contract Bundler is IBundler, AccessControl, Pausable {
 
             (bool success, bytes memory result) = transaction.target.call(data);
 
-            if (!success) {
+            if (!success)
                 revert TransactionError(i, result);
-            }
 
             lastTransactionResult = result;
         }
@@ -156,7 +156,6 @@ contract Bundler is IBundler, AccessControl, Pausable {
             // @dev is dynamic arg
             if (argsBitmap[_transactionId].get(i)) {
                 uint256 interval = Helpers.bytesToUint256(_transaction.args[i]);
-
                 data = bytes.concat(data, Helpers.getSlice(_lastTransactionResult, interval));
             } else {
                 data = bytes.concat(data, _transaction.args[i]);
@@ -175,15 +174,13 @@ contract Bundler is IBundler, AccessControl, Pausable {
         onlyRole(DEFAULT_ADMIN_ROLE)
         returns (bytes memory)
     {
-        if (target == address(this)) {
+        if (target == address(this))
             revert InvalidTarget();
-        }
 
         (bool success, bytes memory result) = target.call(data);
 
-        if (!success) {
+        if (!success)
             revert TransactionError(0, result);
-        }
 
         return result;
     }
@@ -191,6 +188,11 @@ contract Bundler is IBundler, AccessControl, Pausable {
     // TODO: add event
     function setExecutionInterval(uint256 _executionInterval) external onlyRole(DEFAULT_ADMIN_ROLE) {
         executionInterval = _executionInterval;
+    }
+
+    function depositFeeToken(uint256 _amount) external {
+        feeToken.transferFrom(msg.sender, address(this), _amount);
+        feeToken.approve(bundleRunner, _amount);
     }
 
     function withdrawERC20(address _token, uint256 _amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -209,11 +211,31 @@ contract Bundler is IBundler, AccessControl, Pausable {
         return transactions;
     }
 
-    function approveRunner(address _runner) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        grantRole(BUNDLE_RUNNER, _runner);
+    // TODO: emit event
+    function approveBundleRunner(address _bundleRunner) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _grantRole(BUNDLE_RUNNER, _bundleRunner);
+
+        // @dev feeToken cannot be address(0). It is initialized in the constructor
+        IERC20(feeToken).safeIncreaseAllowance(_bundleRunner, 10e18);
+        bundleRunner = _bundleRunner;
     }
 
-    function revokeRunner(address _runner) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        revokeRole(BUNDLE_RUNNER, _runner);
+    // TODO: emit event
+    function revokeBundleRunner(address _runner) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _revokeRole(BUNDLE_RUNNER, _runner);
+        bundleRunner = address(0);
+    }
+
+    function setFeeToken(address _feeToken) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        if (feeTokenRegistry.isTokenAllowed(_feeToken))
+            revert DisallowedFeeToken(_feeToken);
+
+        emit SetFeeToken(address(feeToken), _feeToken);
+
+        feeToken = IERC20(_feeToken);
+    }
+
+    function getFeeToken() external view returns (IERC20) {
+        return feeToken;
     }
 }

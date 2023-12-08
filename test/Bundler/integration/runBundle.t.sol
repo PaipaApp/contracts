@@ -8,7 +8,7 @@ import {IBundler} from "../../../src/interfaces/IBundler.sol";
 import {BundleFixture} from "../../fixtures/BundleFixture.sol";
 
 contract RunBundleIntegraiton is BundleFixture {
-    uint256 constant public depositAmount = 5e18;
+    uint256 public constant depositAmount = 5e18;
 
     function setUp() public override {
         super.setUp();

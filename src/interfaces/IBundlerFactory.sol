@@ -1,5 +1,5 @@
 /**
- * ███████████             ███
+ *        ███████████             ███
  *       ░░███░░░░░███           ░░░
  *        ░███    ░███  ██████   ████  ████████   ██████
  *        ░██████████  ░░░░░███ ░░███ ░░███░░███ ░░░░░███
@@ -16,7 +16,7 @@
 pragma solidity ^0.8.22;
 
 interface IBundlerFactory {
-    function deployBundler(uint256 _executionInterval) external returns (address);
+    function deployBundler(uint256 _executionInterval, address _feeToken) external returns (address);
 
     function getBundler(address _user, uint256 _bundlerId) external view returns (address);
 
