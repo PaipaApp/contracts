@@ -3,56 +3,98 @@ pragma solidity ^0.8.22;
 
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {IFeeTokenRegistry} from "./interfaces/IFeeTokenRegistry.sol";
-import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import {AggregatorV3Interface} from "chainlink-brownie-contracts/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
  
 contract FeeTokenRegistry is IFeeTokenRegistry, Ownable {
     mapping(address => bool) internal allowedFeeTokens;
-    mapping(address => AggregatorV3Interface) public priceFeeds;
-    TokenInfo internal defaultFeeTokenInfo;
+    mapping(address => address) internal priceFeeds;
+    address public defaultFeeToken;
 
-    event UpdateTokensPermission(TokenInfo[] tokens, bool permission);
-    event UpdateDefaultToken(TokenInfo oldDefaultToken, TokenInfo newDefaultToken);
+    event ApprovedTokens(FeeToken[] tokens);
+    event RevokedTokens(address[] tokens);
+    event UpdatedPriceFeeds(FeeToken[] tokens);
+    event UpdateDefaultToken(address newToken, address oldToken);
 
-    constructor(
-        address _owner,
-        TokenInfo[] memory _tokens,
-        TokenInfo memory _defaultFeeTokenInfo
-    ) Ownable(_owner) {
-        defaultFeeTokenInfo = _defaultFeeTokenInfo;
-        batchUpdateTokensPermission(_tokens, true);
+    error InvalidTokensLength();
+    error InvalidTokenAddress();
+    error InvalidFeeTokenParams(address token, address priceFeed);
+
+    constructor(address _owner, FeeToken[] memory _tokens, address _defaultFeeToken) Ownable(_owner) {
+        defaultFeeToken = _defaultFeeToken;
+        approveTokens(_tokens);
     }
 
-    function approveTokens(TokenInfo[] memory _tokens) external onlyOwner {
-        batchUpdateTokensPermission(_tokens, true);
-    }
+    // @dev [`_tokens`] is assigned to memory because it is used by the constructor
+    // and constructor cannot assign parameters to calldata
+    function approveTokens(FeeToken[] memory _tokens) public onlyOwner {
+        if (_tokens.length > 10)
+            revert InvalidTokensLength();
 
-    function revokeTokens(TokenInfo[] memory _tokens) external onlyOwner {
-        batchUpdateTokensPermission(_tokens, false);
-    }
+        for (uint8 i; i < _tokens.length; i++) {
+            address token = _tokens[i].token;
+            address priceFeed = _tokens[i].priceFeed;
 
-    function batchUpdateTokensPermission(TokenInfo[] memory _tokens, bool _isAllowed) internal {
-        for (uint256 i; i < _tokens.length; i++) {
-            address token = address(_tokens[i].token);
+            if (token == address(0) || priceFeed == address(0))
+                revert InvalidFeeTokenParams(token, priceFeed);
 
-            allowedFeeTokens[token] = _isAllowed;
-            priceFeeds[token] = _tokens[i].priceFeed;
+            allowedFeeTokens[token] = true;
+            priceFeeds[token] = priceFeed;
         }
 
-        emit UpdateTokensPermission(_tokens, _isAllowed);
+        emit ApprovedTokens(_tokens);
+    }
+
+    function revokeTokens(address[] memory _tokens) external onlyOwner {
+        if (_tokens.length > 10)
+            revert InvalidTokensLength();
+
+        for (uint8 i; i < _tokens.length; i++) {
+            address token = _tokens[i];
+
+            if (token == address(0))
+                revert InvalidTokenAddress();
+
+            allowedFeeTokens[token] = false;
+        }
+
+        emit RevokedTokens(_tokens);
+    }
+
+    function updatePriceFeeds(FeeToken[] memory _tokens) external onlyOwner {
+        if (_tokens.length > 10)
+            revert InvalidTokensLength();
+
+        for (uint8 i; i < _tokens.length; i++) {
+            address token = _tokens[i].token;
+            address priceFeed = _tokens[i].priceFeed;
+
+            if (token == address(0) || priceFeed == address(0))
+                revert InvalidFeeTokenParams(token, priceFeed);
+
+            priceFeeds[_tokens[i].token] = _tokens[i].priceFeed;
+        }
+
+        emit UpdatedPriceFeeds(_tokens);
     }
 
     function isTokenAllowed(address _token) external view returns (bool) {
         return allowedFeeTokens[_token];
     }
 
-    function getDefaultFeeTokenInfo() external view returns (TokenInfo memory) {
-        return defaultFeeTokenInfo;
+    function getDefaultFeeToken() external view returns (FeeToken memory) {
+        return FeeToken ({
+            token: defaultFeeToken,
+            priceFeed: priceFeeds[defaultFeeToken]
+        });
     }
 
-    function setDefaultFeeTokenInfo(TokenInfo memory _defaultFeeTokenInfo) external onlyOwner {
-        emit UpdateDefaultToken(defaultFeeTokenInfo, _defaultFeeTokenInfo);
+    function setDefaultFeeToken(address _defaultFeeTokenInfo) external onlyOwner {
+        emit UpdateDefaultToken(_defaultFeeTokenInfo, _defaultFeeTokenInfo);
 
-        defaultFeeTokenInfo = _defaultFeeTokenInfo;
+        defaultFeeToken = _defaultFeeTokenInfo;
+    }
+
+    function getPriceFeedForToken(address _token) external view returns (AggregatorV3Interface) {
+        return AggregatorV3Interface(priceFeeds[_token]);
     }
 }
