@@ -15,6 +15,7 @@ import {
     MockFeeToken,
     MockPriceFeed
 } from "../mock/MockContracts.sol";
+import "forge-std/console.sol";
 
 abstract contract BaseFixture is Test {
     address public user0;
@@ -48,26 +49,23 @@ abstract contract BaseFixture is Test {
         mockStake = new MockStake(mockToken);
         mockPriceFeed = new MockPriceFeed();
 
-        IFeeTokenRegistry.TokenInfo[] memory allowedTokens = new IFeeTokenRegistry.TokenInfo[](1);
-        allowedTokens[0] = IFeeTokenRegistry.TokenInfo(
-            mockToken,
-            mockPriceFeed
+        IFeeTokenRegistry.FeeToken[] memory allowedTokens = new IFeeTokenRegistry.FeeToken[](1);
+        allowedTokens[0] = IFeeTokenRegistry.FeeToken(
+            address(mockToken),
+            address(mockPriceFeed)
         );
 
         feeTokenRegistry = new FeeTokenRegistry(
             feeRegistryOwner,
             allowedTokens,
-            IFeeTokenRegistry.TokenInfo(
-                mockToken,
-                mockPriceFeed
-            )
+            address(mockToken)
         );
         bundler = new Bundler(user0, 0, address(mockToken),  feeTokenRegistry);
         factory = new BundlerFactory(factoryOwner, feeTokenRegistry);
         runner = new BundleRunner(runnerOwner, feeTokenRegistry);
 
-        mockToken.transfer(user0, 10e18);
-        mockToken.transfer(user1, 10e18);
+        mockToken.transfer(user0, 1000e18);
+        mockToken.transfer(user1, 1000e18);
 
         mockFeeToken.transfer(user0, 10e18);
         mockFeeToken.transfer(user1, 10e18);

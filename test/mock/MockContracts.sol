@@ -46,7 +46,7 @@ contract MockToken is ERC20("Mock Token", "MOCK") {
     address minter;
 
     constructor() {
-        _mint(msg.sender, 100e18);
+        _mint(msg.sender, 100000000e18);
     }
 
     function mint(address _to, uint256 _amount) external {
@@ -128,7 +128,7 @@ contract MockPriceFeed is AggregatorV3Interface {
       uint80 answeredInRound
     ) {
         return (
-            110680464442257317888,
+            _roundId,
             210394779400,
             1700834135,
             1700834135,

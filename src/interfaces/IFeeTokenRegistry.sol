@@ -12,8 +12,6 @@ interface IFeeTokenRegistry {
         address priceFeed;
     }
 
-    function priceFeeds(address) external view returns (AggregatorV3Interface);
-
     function approveTokens(FeeToken[] memory _tokens) external;
 
     function revokeTokens(address[] memory _tokens) external;

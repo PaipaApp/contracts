@@ -67,7 +67,7 @@ contract Bundler is IBundler, AccessControl, Pausable {
         feeTokenRegistry = _feeTokenRegistry;
         feeToken = feeTokenRegistry.isTokenAllowed(address(_feeToken))
             ? IERC20(_feeToken)
-            : feeTokenRegistry.getDefaultFeeTokenInfo().token;
+            : IERC20(feeTokenRegistry.getDefaultFeeToken().token);
     }
 
     // TODO: first transaction of the bundle cannot be dynamic
@@ -214,6 +214,9 @@ contract Bundler is IBundler, AccessControl, Pausable {
     // TODO: emit event
     function approveBundleRunner(address _bundleRunner) external onlyRole(DEFAULT_ADMIN_ROLE) {
         _grantRole(BUNDLE_RUNNER, _bundleRunner);
+
+        // @dev feeToken cannot be address(0). It is initialized in the constructor
+        IERC20(feeToken).safeIncreaseAllowance(_bundleRunner, 10e18);
         bundleRunner = _bundleRunner;
     }
 

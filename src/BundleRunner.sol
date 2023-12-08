@@ -61,6 +61,8 @@ contract BundleRunner is IBundleRunner, Ownable {
                 tokenAmount
             );
             bundler.runBundle();
+
+            console.log('Bundle runs', bundler.getRuns());
         }
     }
 }

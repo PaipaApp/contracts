@@ -4,10 +4,11 @@ pragma solidity ^0.8.22;
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {IFeeTokenRegistry} from "./interfaces/IFeeTokenRegistry.sol";
 import {AggregatorV3Interface} from "chainlink-brownie-contracts/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "forge-std/console.sol";
  
 contract FeeTokenRegistry is IFeeTokenRegistry, Ownable {
     mapping(address => bool) internal allowedFeeTokens;
-    mapping(address => address) internal priceFeeds;
+    mapping(address => AggregatorV3Interface) internal priceFeeds;
     address public defaultFeeToken;
 
     event ApprovedTokens(FeeToken[] tokens);
@@ -21,12 +22,16 @@ contract FeeTokenRegistry is IFeeTokenRegistry, Ownable {
 
     constructor(address _owner, FeeToken[] memory _tokens, address _defaultFeeToken) Ownable(_owner) {
         defaultFeeToken = _defaultFeeToken;
-        approveTokens(_tokens);
+        _approveTokens(_tokens);
+    }
+
+    function approveTokens(FeeToken[] memory _tokens) public onlyOwner {
+        _approveTokens(_tokens);
     }
 
     // @dev [`_tokens`] is assigned to memory because it is used by the constructor
     // and constructor cannot assign parameters to calldata
-    function approveTokens(FeeToken[] memory _tokens) public onlyOwner {
+    function _approveTokens(FeeToken[] memory _tokens) internal {
         if (_tokens.length > 10)
             revert InvalidTokensLength();
 
@@ -38,7 +43,7 @@ contract FeeTokenRegistry is IFeeTokenRegistry, Ownable {
                 revert InvalidFeeTokenParams(token, priceFeed);
 
             allowedFeeTokens[token] = true;
-            priceFeeds[token] = priceFeed;
+            priceFeeds[token] = AggregatorV3Interface(priceFeed);
         }
 
         emit ApprovedTokens(_tokens);
@@ -71,7 +76,7 @@ contract FeeTokenRegistry is IFeeTokenRegistry, Ownable {
             if (token == address(0) || priceFeed == address(0))
                 revert InvalidFeeTokenParams(token, priceFeed);
 
-            priceFeeds[_tokens[i].token] = _tokens[i].priceFeed;
+            priceFeeds[token] = AggregatorV3Interface(priceFeed);
         }
 
         emit UpdatedPriceFeeds(_tokens);
@@ -84,7 +89,7 @@ contract FeeTokenRegistry is IFeeTokenRegistry, Ownable {
     function getDefaultFeeToken() external view returns (FeeToken memory) {
         return FeeToken ({
             token: defaultFeeToken,
-            priceFeed: priceFeeds[defaultFeeToken]
+            priceFeed: defaultFeeToken
         });
     }
 
@@ -95,6 +100,6 @@ contract FeeTokenRegistry is IFeeTokenRegistry, Ownable {
     }
 
     function getPriceFeedForToken(address _token) external view returns (AggregatorV3Interface) {
-        return AggregatorV3Interface(priceFeeds[_token]);
+        return priceFeeds[_token];
     }
 }
