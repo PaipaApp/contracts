@@ -30,17 +30,23 @@ contract BundleRunner is IBundleRunner, Ownable {
     using SafeERC20 for IERC20;
 
     IFeeTokenRegistry internal feeTokenRegistry;
+    uint8 internal bundleLimitPerBlock;
 
     error DisallowedFeeToken(address feeToken);
     error InsufficientFeeToke();
     error FeeTokenPriceCannotBeZero();
+    error BundleTooBig();
 
-    constructor(address _owner, IFeeTokenRegistry _feeTokenRegistry) Ownable(_owner) {
+    constructor(address _owner, IFeeTokenRegistry _feeTokenRegistry, uint8 _bundleLimitPerBlock) Ownable(_owner) {
         feeTokenRegistry = _feeTokenRegistry;
+        bundleLimitPerBlock =  _bundleLimitPerBlock;
     }
 
     // TODO: add protocol fee on top
     function runBundles(BundleExecutionParams[] calldata _bundleExecutionParams) external onlyOwner {
+        if (_bundleExecutionParams.length > bundleLimitPerBlock)
+            revert BundleTooBig();
+
         for (uint8 i = 0; i < _bundleExecutionParams.length; i++) {
             IBundler bundler = IBundler(_bundleExecutionParams[i].bundle);
             address feeToken = address(bundler.getFeeToken());
@@ -61,5 +67,9 @@ contract BundleRunner is IBundleRunner, Ownable {
             );
             bundler.runBundle();
         }
+    }
+
+    function getBundleLimitPerBlock() external view returns (uint8) {
+        return bundleLimitPerBlock;
     }
 }

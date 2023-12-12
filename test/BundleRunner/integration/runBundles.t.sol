@@ -81,9 +81,7 @@ contract RunBundlesTest is CreateBundleFixture {
 
     function test_RevertsIfFeeTokenPriceIsZero() public {
         mockPriceFeed.setPrice(0);
-
         IBundleRunner.BundleExecutionParams[] memory bundles = new IBundleRunner.BundleExecutionParams[](1);
-
         bundles[0] = IBundleRunner.BundleExecutionParams(
             user0Bundle,
             // @dev value is in wei
@@ -92,6 +90,23 @@ contract RunBundlesTest is CreateBundleFixture {
 
         vm.prank(runnerOwner);
         vm.expectRevert(BundleRunner.FeeTokenPriceCannotBeZero.selector);
+        runner.runBundles(bundles);
+    }
+
+    function test_RevertsIfBundleSizeIsTooBig() public {
+        uint8 oneOverLimit = runner.getBundleLimitPerBlock() + 1;
+        IBundleRunner.BundleExecutionParams[] memory bundles = new IBundleRunner.BundleExecutionParams[](oneOverLimit);
+
+        for (uint8 i; i > oneOverLimit; i++) {
+            bundles[i] = IBundleRunner.BundleExecutionParams(
+                user0Bundle,
+                // @dev value is in wei
+                1000000000000000
+            );
+        }
+
+        vm.prank(runnerOwner);
+        vm.expectRevert(BundleRunner.BundleTooBig.selector);
         runner.runBundles(bundles);
     }
 

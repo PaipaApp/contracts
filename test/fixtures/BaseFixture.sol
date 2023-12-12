@@ -62,7 +62,7 @@ abstract contract BaseFixture is Test {
         );
         bundler = new Bundler(user0, 0, address(mockToken),  feeTokenRegistry);
         factory = new BundlerFactory(factoryOwner, feeTokenRegistry);
-        runner = new BundleRunner(runnerOwner, feeTokenRegistry);
+        runner = new BundleRunner(runnerOwner, feeTokenRegistry, 10);
 
         mockToken.transfer(user0, 1000e18);
         mockToken.transfer(user1, 1000e18);
