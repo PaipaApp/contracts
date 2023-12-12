@@ -78,6 +78,21 @@ contract RunBundlesTest is CreateBundleFixture {
 
         assertEq(treasuryBalanceDelta, expectedTokenBalance);
     }
+
+    function test_RevertsIfFeeTokenPriceIsZero() public {
+        mockPriceFeed.setPrice(0);
+
+        IBundleRunner.BundleExecutionParams[] memory bundles = new IBundleRunner.BundleExecutionParams[](1);
+
+        bundles[0] = IBundleRunner.BundleExecutionParams(
+            user0Bundle,
+            // @dev value is in wei
+            1000000000000000
+        );
+
+        vm.prank(runnerOwner);
+        vm.expectRevert(BundleRunner.FeeTokenPriceCannotBeZero.selector);
+        runner.runBundles(bundles);
     }
 
     function test_RevertOnDisallowedFeeToken() public {}

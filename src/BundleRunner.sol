@@ -48,7 +48,7 @@ contract BundleRunner is IBundleRunner, Ownable {
             AggregatorV3Interface priceFeed = feeTokenRegistry.getPriceFeedForToken(feeToken);
             (, int256 price, , , ) = priceFeed.latestRoundData();
 
-            if (price < 0)
+            if (price <= 0)
                 revert FeeTokenPriceCannotBeZero();
 
             // @dev priceFeed returns the price in 8 decimals, price is multiplied by 1e10 in order to convert to 18 decimals
@@ -60,8 +60,6 @@ contract BundleRunner is IBundleRunner, Ownable {
                 tokenAmount
             );
             bundler.runBundle();
-
-            console.log('Bundle runs', bundler.getRuns());
         }
     }
 }
