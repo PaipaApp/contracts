@@ -100,16 +100,20 @@ contract MockStake {
     }
 }
 
-// @dev ETH/USD mock price feed fixed in U$ 2103.94
+// @dev USD/ETH mock price feed fixed at U$ 2000.00
 contract MockPriceFeed is AggregatorV3Interface {
     uint8 public decimals;
     string public description;
     uint256 public version;
+    // @dev this variable is used to manipulate the price of the pair
+    // during the tests
+    int256 internal ethUsdPrice;
 
     constructor() {
         decimals = 8;
         description = "ETH/USD price feed";
         version = 1;
+        ethUsdPrice = 200000000000; // USD/ETH at U$ 2k/ETH
     }
 
   // getRoundData and latestRoundData should both raise "No data present"
@@ -119,7 +123,7 @@ contract MockPriceFeed is AggregatorV3Interface {
     uint80 _roundId
   )
     external
-    pure
+    view
     returns (
       uint80 roundId,
       int256 answer,
@@ -129,7 +133,7 @@ contract MockPriceFeed is AggregatorV3Interface {
     ) {
         return (
             _roundId,
-            210394779400,
+            ethUsdPrice,
             1700834135,
             1700834135,
             110680464442257317888
@@ -138,7 +142,7 @@ contract MockPriceFeed is AggregatorV3Interface {
 
   function latestRoundData()
     external
-    pure
+    view
     returns (
       uint80 roundId,
       int256 answer,
@@ -148,10 +152,14 @@ contract MockPriceFeed is AggregatorV3Interface {
     ) {
         return (
             110680464442257317888,
-            210394779400,
+            ethUsdPrice,
             1700834135,
             1700834135,
             110680464442257317888
         );
+    }
+
+    function setPrice(int256 _price) external {
+        ethUsdPrice = _price;
     }
 }
