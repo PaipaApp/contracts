@@ -49,6 +49,7 @@ contract RunBundlesTest is CreateBundleFixture {
         IBundleRunner.BundleExecutionParams[] memory bundles = new IBundleRunner.BundleExecutionParams[](1);
         bundles[0] = IBundleRunner.BundleExecutionParams(
             user0Bundle,
+            // @dev value is in wei
             1000000000000000
         );
 
@@ -61,17 +62,22 @@ contract RunBundlesTest is CreateBundleFixture {
 
     function test_SendFeesToTreasury() public {
         uint treasurBalanceBefore = mockToken.balanceOf(address(runner));
-
         IBundleRunner.BundleExecutionParams[] memory bundles = new IBundleRunner.BundleExecutionParams[](1);
+
         bundles[0] = IBundleRunner.BundleExecutionParams(
             user0Bundle,
+            // @dev value is in wei
             1000000000000000
         );
 
         vm.prank(runnerOwner);
         runner.runBundles(bundles);
 
-        assertTrue(mockToken.balanceOf(address(runner)) - treasurBalanceBefore > 0);
+        uint treasuryBalanceDelta = mockToken.balanceOf(address(runner)) - treasurBalanceBefore;
+        uint expectedTokenBalance = 2e18;
+
+        assertEq(treasuryBalanceDelta, expectedTokenBalance);
+    }
     }
 
     function test_RevertOnDisallowedFeeToken() public {}

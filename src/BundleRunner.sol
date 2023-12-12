@@ -51,9 +51,8 @@ contract BundleRunner is IBundleRunner, Ownable {
             if (price < 0)
                 revert FeeTokenPriceCannotBeZero();
 
-            // @dev priceFeed returns the price in 8 decimals, need to convert ETH to 8 decimals
-            uint256 ethAmountIn8Decimals = _bundleExecutionParams[i].transactionCost / 1e10;
-            uint256 tokenAmount = ethAmountIn8Decimals * uint256(price);
+            // @dev priceFeed returns the price in 8 decimals, price is multiplied by 1e10 in order to convert to 18 decimals
+            uint256 tokenAmount = _bundleExecutionParams[i].transactionCost * uint256(price * 1e10) / 1e18;
 
             bundler.getFeeToken().safeTransferFrom(
                 address(bundler),
