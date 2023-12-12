@@ -25,7 +25,7 @@ contract RunBundlesTest is CreateBundleFixture {
 
         vm.startPrank(user1); {
             IBundler(user1Bundle).approveBundleRunner(address(runner));
-            mockToken.transfer(user0Bundle, 100e18);
+            mockToken.transfer(user1Bundle, 100e18);
         }
         vm.stopPrank();
 
@@ -46,9 +46,14 @@ contract RunBundlesTest is CreateBundleFixture {
 
     // TODO: add one more tx to bundle
     function test_RunMultipleBundles() public {
-        IBundleRunner.BundleExecutionParams[] memory bundles = new IBundleRunner.BundleExecutionParams[](1);
+        IBundleRunner.BundleExecutionParams[] memory bundles = new IBundleRunner.BundleExecutionParams[](2);
         bundles[0] = IBundleRunner.BundleExecutionParams(
             user0Bundle,
+            // @dev value is in wei
+            1000000000000000
+        );
+        bundles[1] = IBundleRunner.BundleExecutionParams(
+            user1Bundle,
             // @dev value is in wei
             1000000000000000
         );
@@ -57,7 +62,7 @@ contract RunBundlesTest is CreateBundleFixture {
         runner.runBundles(bundles);
 
         assertEq(IBundler(user0Bundle).getRuns(), uint256(1));
-        // assertEq(IBundler(user1Bundle).getRuns(), uint256(1));
+        assertEq(IBundler(user1Bundle).getRuns(), uint256(1));
     }
 
     function test_SendFeesToTreasury() public {
