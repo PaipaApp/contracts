@@ -6,6 +6,7 @@ import "forge-std/Script.sol";
 import {FeeTokenRegistry} from "../src/FeeTokenRegistry.sol";
 import {IFeeTokenRegistry} from "../src/interfaces/IFeeTokenRegistry.sol";
 import {MockPriceFeed, MockToken} from "../test/mock/MockContracts.sol";
+import {BundlerFactory} from "../src/BundlerFactory.sol";
 import "forge-std/console.sol";
 
 contract DeployTestEnvironment is Script {
@@ -32,7 +33,12 @@ contract DeployTestEnvironment is Script {
                 address(token)
             );
 
-            console.log("FeeTokenRegistry deployed at: %s", address(feeTokenRegistry));
+            BundlerFactory bundlerFactory = new BundlerFactory(
+                deployer,
+                feeTokenRegistry
+            );
+
+            console.log("BundlerFactory deployed at: %s", address(bundlerFactory));
         }
         vm.stopBroadcast();
     }
