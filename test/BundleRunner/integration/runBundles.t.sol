@@ -10,6 +10,8 @@ import {IBundler} from "../../../src/interfaces/IBundler.sol";
 contract RunBundlesTest is CreateBundleFixture {
     address user0Bundle;
     address user1Bundle;
+    uint256 constant transactionCost = 1000000000000000;
+
 
     function setUp() public override {
         super.setUp();
@@ -28,14 +30,13 @@ contract RunBundlesTest is CreateBundleFixture {
             mockToken.transfer(user1Bundle, 100e18);
         }
         vm.stopPrank();
-
     }
 
     function test_RunSingleBundle() public {
         IBundleRunner.BundleExecutionParams[] memory bundles = new IBundleRunner.BundleExecutionParams[](1);
         bundles[0] = IBundleRunner.BundleExecutionParams(
             user0Bundle,
-            1000000000000000 
+            transactionCost 
         );
 
         vm.prank(runnerOwner);
@@ -50,12 +51,12 @@ contract RunBundlesTest is CreateBundleFixture {
         bundles[0] = IBundleRunner.BundleExecutionParams(
             user0Bundle,
             // @dev value is in wei
-            1000000000000000
+            transactionCost
         );
         bundles[1] = IBundleRunner.BundleExecutionParams(
             user1Bundle,
             // @dev value is in wei
-            1000000000000000
+            transactionCost
         );
 
         vm.prank(runnerOwner);
@@ -72,7 +73,7 @@ contract RunBundlesTest is CreateBundleFixture {
         bundles[0] = IBundleRunner.BundleExecutionParams(
             user0Bundle,
             // @dev value is in wei
-            1000000000000000
+            transactionCost
         );
 
         vm.prank(runnerOwner);
@@ -90,7 +91,7 @@ contract RunBundlesTest is CreateBundleFixture {
         bundles[0] = IBundleRunner.BundleExecutionParams(
             user0Bundle,
             // @dev value is in wei
-            1000000000000000
+            transactionCost
         );
 
         vm.prank(runnerOwner);
@@ -106,7 +107,7 @@ contract RunBundlesTest is CreateBundleFixture {
             bundles[i] = IBundleRunner.BundleExecutionParams(
                 user0Bundle,
                 // @dev value is in wei
-                1000000000000000
+                transactionCost
             );
         }
 
