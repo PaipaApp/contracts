@@ -25,7 +25,7 @@ contract FeeTokenRegistry is IFeeTokenRegistry, Ownable {
         _approveTokens(_tokens);
     }
 
-    function approveTokens(FeeToken[] memory _tokens) public onlyOwner {
+    function approveTokens(FeeToken[] memory _tokens) external onlyOwner {
         _approveTokens(_tokens);
     }
 
