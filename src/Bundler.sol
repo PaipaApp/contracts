@@ -61,7 +61,7 @@ contract Bundler is IBundler, AccessControl, Pausable {
     error NotAllowedToRunBundle();
     error FirstTransactionWithDynamicArg(uint256 argIndex);
     error DisallowedFeeToken(address feeToken);
-    error MaxTransactionPerBundle();
+    error MaxTransactionPerBundleReached();
 
     constructor(address _owner, uint256 _executionInterval, address _feeToken, IFeeTokenRegistry _feeTokenRegistry) {
         _grantRole(DEFAULT_ADMIN_ROLE, _owner);
@@ -80,7 +80,7 @@ contract Bundler is IBundler, AccessControl, Pausable {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         if (_transactions.length > MAX_BUNDLE_SIZE)
-            revert MaxTransactionPerBundle();
+            revert MaxTransactionPerBundleReached();
 
         if (_argTypes.length != _transactions.length)
             revert ArgsMismatch();
