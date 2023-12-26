@@ -1739,8 +1739,8 @@
       }
     },
     "src/Bundler.sol": {
-      "lastModificationDate": 1703617081876,
-      "contentHash": "23a62c4c30b118992a561664d01a5337",
+      "lastModificationDate": 1703624358066,
+      "contentHash": "10065cf1ce66e474926b3d7f99866606",
       "sourceName": "src/Bundler.sol",
       "solcConfig": {
         "settings": {
@@ -2396,7 +2396,7 @@
       }
     },
     "test/Bundler/unit/createBundle.sol": {
-      "lastModificationDate": 1703617870665,
+      "lastModificationDate": 1703617882633,
       "contentHash": "3bab73fa10c46cb1241cb51715b8e698",
       "sourceName": "test/Bundler/unit/createBundle.sol",
       "solcConfig": {
@@ -2487,8 +2487,8 @@
       }
     },
     "test/Bundler/unit/runBundle.sol": {
-      "lastModificationDate": 1702122780216,
-      "contentHash": "18690b0715f72c67b72455d4cc4f7fc9",
+      "lastModificationDate": 1703624667775,
+      "contentHash": "9d87843b2b9512725a19b1d162277509",
       "sourceName": "test/Bundler/unit/runBundle.sol",
       "solcConfig": {
         "settings": {
@@ -3336,8 +3336,8 @@
       }
     },
     "test/fixtures/BundleFixture.sol": {
-      "lastModificationDate": 1702122780216,
-      "contentHash": "7dadcfea1df4536e612d42ff1f9c80f9",
+      "lastModificationDate": 1703622385109,
+      "contentHash": "77c81bd8bef7eecca816aa68008bacea",
       "sourceName": "test/fixtures/BundleFixture.sol",
       "solcConfig": {
         "settings": {
@@ -3418,7 +3418,7 @@
         "test/fixtures/TransactionsFixture.sol",
         "test/mock/MockContracts.sol"
       ],
-      "versionRequirement": null,
+      "versionRequirement": "^0.8.22",
       "artifacts": {
         "BundleFixture": {
           "0.8.22+commit.4fc1097e.Linux.gcc": "BundleFixture.sol/BundleFixture.json"

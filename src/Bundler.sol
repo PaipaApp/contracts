@@ -72,9 +72,6 @@ contract Bundler is IBundler, AccessControl, Pausable {
             : IERC20(feeTokenRegistry.getDefaultFeeToken().token);
     }
 
-    // TODO: first transaction of the bundle cannot be dynamic
-    // TODO: add max transacion per bundle
-    // TODO: how to make users pay for the gas usage (?)
     function createBundle(Transaction[] memory _transactions, bool[][] calldata _argTypes)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
@@ -127,11 +124,12 @@ contract Bundler is IBundler, AccessControl, Pausable {
         return argsBitmap[transactionId].get(argId);
     }
 
-    // TODO: time guard
     function runBundle() external whenNotPaused {
-        if (!hasRole(DEFAULT_ADMIN_ROLE, msg.sender) && !hasRole(BUNDLE_RUNNER, msg.sender)) {
+        if (lastExecutionTimestamp > 0 && block.timestamp < lastExecutionTimestamp + executionInterval)
+            revert ExecutionBeforeInterval();
+
+        if (!hasRole(DEFAULT_ADMIN_ROLE, msg.sender) && !hasRole(BUNDLE_RUNNER, msg.sender))
             revert NotAllowedToRunBundle();
-        }
 
         bytes memory lastTransactionResult;
 
@@ -148,6 +146,7 @@ contract Bundler is IBundler, AccessControl, Pausable {
         }
 
         runs += 1;
+        lastExecutionTimestamp = block.timestamp;
     }
 
     function buildData(uint256 _transactionId, Transaction memory _transaction, bytes memory _lastTransactionResult)
@@ -167,9 +166,6 @@ contract Bundler is IBundler, AccessControl, Pausable {
             }
         }
     }
-
-    // TODO: this function get the amount
-    function pullFee() internal {}
 
     // TODO: add event
     // @notice Execute an arbitrary transaction in order for this contract to become
