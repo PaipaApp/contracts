@@ -53,6 +53,7 @@ contract Bundler is IBundler, AccessControl, Pausable {
     IFeeTokenRegistry public feeTokenRegistry;
 
     event SetFeeToken(address oldFeeToken, address newFeeToken);
+    event TransactionRan(address to, bytes result);
 
     error TransactionError(uint256 transactionId, bytes result);
     error InvalidTarget();
@@ -167,7 +168,6 @@ contract Bundler is IBundler, AccessControl, Pausable {
         }
     }
 
-    // TODO: add event
     // @notice Execute an arbitrary transaction in order for this contract to become
     // the owner of a given position in a given contract
     function runTransaction(address target, bytes calldata data)
@@ -175,13 +175,15 @@ contract Bundler is IBundler, AccessControl, Pausable {
         onlyRole(DEFAULT_ADMIN_ROLE)
         returns (bytes memory)
     {
-        if (target == address(this))
+        if (target == address(this) || target == address(0))
             revert InvalidTarget();
 
         (bool success, bytes memory result) = target.call(data);
 
         if (!success)
             revert TransactionError(0, result);
+
+        emit TransactionRan(target, result);
 
         return result;
     }
