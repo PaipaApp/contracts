@@ -54,6 +54,7 @@ contract Bundler is IBundler, AccessControl, Pausable {
 
     event SetFeeToken(address oldFeeToken, address newFeeToken);
     event TransactionRan(address to, bytes result);
+    event SetExecutionInterval(uint256 oldInterval, uint256 newInterval);
 
     error TransactionError(uint256 transactionId, bytes result);
     error InvalidTarget();
@@ -188,11 +189,13 @@ contract Bundler is IBundler, AccessControl, Pausable {
         return result;
     }
 
-    // TODO: add event
     function setExecutionInterval(uint256 _executionInterval) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        emit SetExecutionInterval(executionInterval, _executionInterval);
+
         executionInterval = _executionInterval;
     }
 
+    // TODO: add event
     function depositFeeToken(uint256 _amount) external {
         feeToken.transferFrom(msg.sender, address(this), _amount);
         feeToken.approve(bundleRunner, _amount);
@@ -224,13 +227,14 @@ contract Bundler is IBundler, AccessControl, Pausable {
     }
 
     // TODO: emit event
+    // TODO: set allowance to zero
     function revokeBundleRunner(address _runner) external onlyRole(DEFAULT_ADMIN_ROLE) {
         _revokeRole(BUNDLE_RUNNER, _runner);
         bundleRunner = address(0);
     }
 
     function setFeeToken(address _feeToken) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        if (feeTokenRegistry.isTokenAllowed(_feeToken))
+        if (!feeTokenRegistry.isTokenAllowed(_feeToken))
             revert DisallowedFeeToken(_feeToken);
 
         emit SetFeeToken(address(feeToken), _feeToken);
