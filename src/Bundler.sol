@@ -189,6 +189,10 @@ contract Bundler is IBundler, AccessControl, Pausable {
         return result;
     }
 
+    function getExecutionInterval() external view returns (uint256) {
+        return executionInterval;
+    }
+
     function setExecutionInterval(uint256 _executionInterval) external onlyRole(DEFAULT_ADMIN_ROLE) {
         emit SetExecutionInterval(executionInterval, _executionInterval);
 

@@ -13,7 +13,7 @@ import { IAccessControl } from 'openzeppelin-contracts/contracts/access/IAccessC
 //          Then revert with DisallowedFeeToken error
 // Given a non-owner of the contract
 //     When call setFeeToken
-//        Then revert with AccessControl error
+//        Then revert with AccessControlUnauthorizedAccount error
 contract SetFeeTokenUnit is BundleFixture {
     modifier givenOwner() {
         _;
@@ -75,7 +75,7 @@ contract SetFeeTokenUnit is BundleFixture {
         bundler.setFeeToken(newFeeToken);
     }
 
-    function test_RevertWithAccessControlError() 
+    function test_RevertWithAccessControlUnauthorizedAccount() 
         givenNonOwner
         whenCallSetFeeToken
         public
