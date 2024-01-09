@@ -27,10 +27,9 @@ import {IBundler} from "./interfaces/IBundler.sol";
 import {IFeeTokenRegistry} from "./interfaces/IFeeTokenRegistry.sol";
 
 // TODO: how reentrancy can affect execution
-// TODO: implement a fee cap, so users don't may more than disired for the execution
+// TODO: implement a fee cap, so users don't pay more than disired for the execution
 // TODO: how to work with ERC721 and ERC1155 approvals
 // @dev this contract doesn't support ERC1155 transactions nor payable transactions
-// TODO: maybe convert the contract to support multiple bundlers(?)
 contract Bundler is IBundler, AccessControl, Pausable {
     using BitMaps for BitMaps.BitMap;
     using SafeERC20 for IERC20;
@@ -55,6 +54,7 @@ contract Bundler is IBundler, AccessControl, Pausable {
     event TransactionRan(address to, bytes result);
     event SetExecutionInterval(uint256 oldInterval, uint256 newInterval);
     event BundleRunnerRevoked(address runner);
+    event BundleRunnerApproved(address runner);
 
     error TransactionError(uint256 transactionId, bytes result);
     error InvalidTarget();
@@ -221,13 +221,14 @@ contract Bundler is IBundler, AccessControl, Pausable {
         return transactions;
     }
 
-    // TODO: emit event
     function approveBundleRunner(address _bundleRunner) external onlyRole(DEFAULT_ADMIN_ROLE) {
         _grantRole(BUNDLE_RUNNER, _bundleRunner);
 
         // @dev feeToken cannot be address(0). It is initialized in the constructor
-        IERC20(feeToken).safeIncreaseAllowance(_bundleRunner, 10e18);
+        IERC20(feeToken).safeIncreaseAllowance(_bundleRunner, type(uint256).max);
         bundleRunner = _bundleRunner;
+
+        emit BundleRunnerApproved(_bundleRunner);
     }
 
     function revokeBundleRunner(address _runner) external onlyRole(DEFAULT_ADMIN_ROLE) {

@@ -107,12 +107,12 @@ contract SetFeeTokenUnit is BundleFixture {
     {
         bytes memory errorSelector = abi.encodeWithSelector(
             Bundler.DisallowedFeeToken.selector,
-            address(newFeeToken)
+            address(5) // @dev arbitrary not allowed address
         );
 
         vm.expectRevert(errorSelector);
         vm.prank(user0);
-        bundler.setFeeToken(address(newFeeToken));
+        bundler.setFeeToken(address(5));
     }
 
     function test_RevertWithAccessControlUnauthorizedAccount() 
