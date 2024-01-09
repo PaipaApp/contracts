@@ -42,6 +42,7 @@ contract FeeTokenRegistry is IFeeTokenRegistry, Ownable {
             if (token == address(0) || priceFeed == address(0))
                 revert InvalidFeeTokenParams(token, priceFeed);
 
+
             allowedFeeTokens[token] = true;
             priceFeeds[token] = AggregatorV3Interface(priceFeed);
         }
@@ -49,7 +50,7 @@ contract FeeTokenRegistry is IFeeTokenRegistry, Ownable {
         emit ApprovedTokens(_tokens);
     }
 
-    function revokeTokens(address[] memory _tokens) external onlyOwner {
+    function revokeTokens(address[] calldata _tokens) external onlyOwner {
         if (_tokens.length > 10)
             revert InvalidTokensLength();
 
@@ -65,7 +66,7 @@ contract FeeTokenRegistry is IFeeTokenRegistry, Ownable {
         emit RevokedTokens(_tokens);
     }
 
-    function updatePriceFeeds(FeeToken[] memory _tokens) external onlyOwner {
+    function updatePriceFeeds(FeeToken[] calldata _tokens) external onlyOwner {
         if (_tokens.length > 10)
             revert InvalidTokensLength();
 

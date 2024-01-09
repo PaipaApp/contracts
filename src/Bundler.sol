@@ -15,7 +15,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-import "forge-std/console.sol";
 import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
@@ -242,6 +241,9 @@ contract Bundler is IBundler, AccessControl, Pausable {
             revert DisallowedFeeToken(_feeToken);
 
         emit SetFeeToken(address(feeToken), _feeToken);
+
+        IERC20(feeToken).forceApprove(bundleRunner, 0);
+        IERC20(_feeToken).safeIncreaseAllowance(bundleRunner, type(uint256).max);
 
         feeToken = IERC20(_feeToken);
     }
