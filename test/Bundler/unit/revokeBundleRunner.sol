@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
+import {IAccessControl} from "openzeppelin-contracts/contracts/access/IAccessControl.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import {BaseFixture} from "../../fixtures/BaseFixture.sol";
 import {Bundler} from "../../../src/Bundler.sol";
@@ -66,6 +67,21 @@ contract RevokeBundleRunnerUnit is BaseFixture {
         bundler.revokeBundleRunner(address(runner));
 
         assertEq(feeToken.allowance(address(bundler), address(runner)), 0);
+    }
+
+    function test_RevertWithAccessControlUnauthorizedAccount()
+        givenNonOwner
+        whenCallRevokeBundleRunner
+        public
+    {
+        bytes memory errorSelector = abi.encodeWithSelector(
+            IAccessControl.AccessControlUnauthorizedAccount.selector,
+            address(this),
+            0x00 // DEFAULT_ADMIN_ROLE
+        );
+
+        vm.expectRevert(errorSelector);
+        bundler.revokeBundleRunner(address(runner));
     }
 }
 
