@@ -54,6 +54,7 @@ contract Bundler is IBundler, AccessControl, Pausable {
     event SetFeeToken(address oldFeeToken, address newFeeToken);
     event TransactionRan(address to, bytes result);
     event SetExecutionInterval(uint256 oldInterval, uint256 newInterval);
+    event BundleRunnerRevoked(address runner);
 
     error TransactionError(uint256 transactionId, bytes result);
     error InvalidTarget();
@@ -229,10 +230,12 @@ contract Bundler is IBundler, AccessControl, Pausable {
         bundleRunner = _bundleRunner;
     }
 
-    // TODO: emit event
-    // TODO: set allowance to zero
     function revokeBundleRunner(address _runner) external onlyRole(DEFAULT_ADMIN_ROLE) {
         _revokeRole(BUNDLE_RUNNER, _runner);
+        IERC20(feeToken).forceApprove(_runner, 0);
+
+        emit BundleRunnerRevoked(_runner);
+
         bundleRunner = address(0);
     }
 
@@ -250,5 +253,9 @@ contract Bundler is IBundler, AccessControl, Pausable {
 
     function getFeeToken() external view returns (IERC20) {
         return feeToken;
+    }
+
+    function getBundleRunner() external view returns (address) {
+        return bundleRunner;
     }
 }
