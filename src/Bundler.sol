@@ -27,7 +27,6 @@ import {IBundler} from "./interfaces/IBundler.sol";
 import {IFeeTokenRegistry} from "./interfaces/IFeeTokenRegistry.sol";
 
 // TODO: how reentrancy can affect execution
-// TODO: implement a fee cap, so users don't pay more than disired for the execution
 // TODO: how to work with ERC721 and ERC1155 approvals
 // @dev this contract doesn't support ERC1155 transactions nor payable transactions
 contract Bundler is IBundler, AccessControl, Pausable {
