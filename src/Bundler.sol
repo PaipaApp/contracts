@@ -55,6 +55,7 @@ contract Bundler is IBundler, AccessControl, Pausable {
     event SetExecutionInterval(uint256 oldInterval, uint256 newInterval);
     event BundleRunnerRevoked(address runner);
     event BundleRunnerApproved(address runner);
+    event FeeTokenDeposited(address token, uint256 amount);
 
     error TransactionError(uint256 transactionId, bytes result);
     error InvalidTarget();
@@ -199,10 +200,9 @@ contract Bundler is IBundler, AccessControl, Pausable {
         executionInterval = _executionInterval;
     }
 
-    // TODO: add event
     function depositFeeToken(uint256 _amount) external {
         feeToken.transferFrom(msg.sender, address(this), _amount);
-        feeToken.approve(bundleRunner, _amount);
+        emit FeeTokenDeposited(address(feeToken), _amount);
     }
 
     function withdrawERC20(address _token, uint256 _amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
