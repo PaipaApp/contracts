@@ -36,6 +36,7 @@ contract BundleRunner is IBundleRunner, Ownable {
     error InsufficientFeeToke();
     error FeeTokenPriceCannotBeZero();
     error BundleTooBig();
+    error FeeTooHigh(uint256 feeAmount, uint256 maxFeePerRun);
 
     constructor(address _owner, IFeeTokenRegistry _feeTokenRegistry, uint8 _bundleLimitPerBlock) Ownable(_owner) {
         feeTokenRegistry = _feeTokenRegistry;
@@ -59,6 +60,10 @@ contract BundleRunner is IBundleRunner, Ownable {
 
             // @dev priceFeed returns the price in 8 decimals, price is multiplied by 1e10 in order to convert to 18 decimals
             uint256 tokenAmount = _bundleExecutionParams[i].transactionCost * uint256(price * 1e10) / 1e18;
+            uint256 maxFeePerRun = bundler.getMaxFeePerRun();
+
+            if (tokenAmount > maxFeePerRun)
+                revert FeeTooHigh(tokenAmount, maxFeePerRun);
 
             bundler.getFeeToken().safeTransferFrom(
                 address(bundler),

@@ -7,11 +7,15 @@ import {BundleRunner} from "../../../src/BundleRunner.sol";
 import {IBundleRunner} from "../../../src/interfaces/IBundleRunner.sol";
 import {IBundler} from "../../../src/interfaces/IBundler.sol";
 
+// Given the owner of the contract
+//      When runBundles is called
+//      And execution fee is higher than maxFeePerRun
+//         Then revert with FeeTooHigh error
 contract RunBundlesTest is CreateBundleFixture {
     address user0Bundle;
     address user1Bundle;
+    uint256 maxFeePerRun = 5e18;
     uint256 constant transactionCost = 1000000000000000;
-
 
     function setUp() public override {
         super.setUp();
@@ -21,12 +25,14 @@ contract RunBundlesTest is CreateBundleFixture {
 
         vm.startPrank(user0); {
             IBundler(user0Bundle).approveBundleRunner(address(runner));
+            IBundler(user0Bundle).setMaxFeePerRun(maxFeePerRun);
             mockToken.transfer(user0Bundle, 100e18);
         }
         vm.stopPrank();
 
         vm.startPrank(user1); {
             IBundler(user1Bundle).approveBundleRunner(address(runner));
+            IBundler(user1Bundle).setMaxFeePerRun(maxFeePerRun);
             mockToken.transfer(user1Bundle, 100e18);
         }
         vm.stopPrank();
@@ -113,6 +119,33 @@ contract RunBundlesTest is CreateBundleFixture {
 
         vm.prank(runnerOwner);
         vm.expectRevert(BundleRunner.BundleTooBig.selector);
+        runner.runBundles(bundles);
+    }
+
+    function test_RevertsIfFeeIsTooHigh() public {
+        uint256 newMaxFeePerRun = 1e18;
+        (, int256 price, , , ) = mockPriceFeed.latestRoundData();
+        uint256 tokenAmount = transactionCost * uint256(price * 1e10) / 1e18;
+
+        vm.prank(user0);
+        IBundler(user0Bundle).setMaxFeePerRun(newMaxFeePerRun);
+
+        bytes memory errorSelector = abi.encodeWithSelector(
+            BundleRunner.FeeTooHigh.selector,
+            tokenAmount,
+            newMaxFeePerRun
+        );
+
+        IBundleRunner.BundleExecutionParams[] memory bundles = new IBundleRunner.BundleExecutionParams[](1);
+
+        bundles[0] = IBundleRunner.BundleExecutionParams(
+            user0Bundle,
+            // @dev value is in wei
+            transactionCost
+        );
+
+        vm.prank(runnerOwner);
+        vm.expectRevert(errorSelector);
         runner.runBundles(bundles);
     }
 

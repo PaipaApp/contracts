@@ -49,4 +49,8 @@ interface IBundler {
     function getFeeToken() external view returns (IERC20);
 
     function depositFeeToken(uint256 _amount) external;
+
+    function getMaxFeePerRun() external view returns (uint256);
+
+    function setMaxFeePerRun(uint256 _maxFeePerRun) external;
 }

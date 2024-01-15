@@ -44,6 +44,7 @@ contract Bundler is IBundler, AccessControl, Pausable {
     uint256 private lastExecutionTimestamp;
     uint256 private executionInterval;
     uint256 private runs;
+    uint256 private maxFeePerRun;
     address private bundleRunner;
 
     uint8 constant public MAX_BUNDLE_SIZE = 10;
@@ -51,6 +52,7 @@ contract Bundler is IBundler, AccessControl, Pausable {
     IFeeTokenRegistry public feeTokenRegistry;
 
     event SetFeeToken(address oldFeeToken, address newFeeToken);
+    event SetMaxFeePerRun(uint256 oldMaxFee, uint256 newMaxFee);
     event TransactionRan(address to, bytes result);
     event SetExecutionInterval(uint256 oldInterval, uint256 newInterval);
     event BundleRunnerRevoked(address runner);
@@ -240,6 +242,12 @@ contract Bundler is IBundler, AccessControl, Pausable {
         bundleRunner = address(0);
     }
 
+    function setMaxFeePerRun(uint256 _maxFee) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        emit SetMaxFeePerRun(maxFeePerRun, _maxFee);
+
+        maxFeePerRun = _maxFee;
+    }
+
     function setFeeToken(address _feeToken) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if (!feeTokenRegistry.isTokenAllowed(_feeToken))
             revert DisallowedFeeToken(_feeToken);
@@ -258,5 +266,9 @@ contract Bundler is IBundler, AccessControl, Pausable {
 
     function getBundleRunner() external view returns (address) {
         return bundleRunner;
+    }
+
+    function getMaxFeePerRun() external view returns (uint256) {
+        return maxFeePerRun;
     }
 }
