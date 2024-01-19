@@ -49,36 +49,54 @@ contract BundleRunner is IBundleRunner, Ownable {
         treasury = _treasury;
     }
 
-    // TODO: add protocol fee on top
     function runBundles(BundleExecutionParams[] calldata _bundleExecutionParams) external onlyOwner {
         if (_bundleExecutionParams.length > bundleLimitPerBlock)
             revert BundleTooBig();
 
         for (uint8 i = 0; i < _bundleExecutionParams.length; i++) {
             IBundler bundler = IBundler(_bundleExecutionParams[i].bundle);
-            address feeToken = address(bundler.getFeeToken());
+            IERC20 feeToken = bundler.getFeeToken();
 
-            AggregatorV3Interface priceFeed = feeTokenRegistry.getPriceFeedForToken(feeToken);
-            (, int256 price, , , ) = priceFeed.latestRoundData();
-
-            if (price <= 0)
-                revert FeeTokenPriceCannotBeZero();
-
-            // @dev priceFeed returns the price in 8 decimals, price is multiplied 
-            // by 1e10 in order to convert to 18 decimals
-            uint256 tokenAmount = _bundleExecutionParams[i].transactionCost * uint256(price * 1e10) / 1e18;
             uint256 maxFeePerRun = bundler.getMaxFeePerRun();
+            (uint256 protocolFee, uint256 transactionFee) = getExecutionFees(
+                _bundleExecutionParams[i].transactionCost,
+                address(feeToken)
+            );
+            uint256 totalFee = protocolFee + transactionFee;
 
-            if (tokenAmount > maxFeePerRun)
-                revert FeeTooHigh(tokenAmount, maxFeePerRun);
+            if (totalFee > maxFeePerRun)
+                revert FeeTooHigh(totalFee, maxFeePerRun);
+
+            feeToken = bundler.getFeeToken();
 
             bundler.getFeeToken().safeTransferFrom(
                 address(bundler),
                 treasury,
-                tokenAmount
+                protocolFee
+            );
+            bundler.getFeeToken().safeTransferFrom(
+                address(bundler),
+                address(this),
+                transactionFee
             );
             bundler.runBundle();
         }
+    }
+
+    function getExecutionFees(
+        uint256 _transactionCost, 
+        address _feeToken
+    ) internal view returns (uint256 protocolFee, uint256 transactionFee) {
+        AggregatorV3Interface priceFeed = feeTokenRegistry.getPriceFeedForToken(_feeToken);
+        (, int256 price, , , ) = priceFeed.latestRoundData();
+
+        if (price <= 0)
+            revert FeeTokenPriceCannotBeZero();
+
+        // @dev priceFeed returns the price in 8 decimals, price is multiplied 
+        // by 1e10 in order to convert to 18 decimals
+        transactionFee = _transactionCost * uint256(price * 1e10) / 1e18;
+        protocolFee = transactionFee + transactionFee * 1_000 / 10_000;
     }
 
     function getBundleLimitPerBlock() external view returns (uint8) {
