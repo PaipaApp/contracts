@@ -13,7 +13,7 @@
  */
 
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.22;
+pragma solidity 0.8.22;
 
 library Helpers {
     error InvalidBytesLength();
@@ -29,7 +29,6 @@ library Helpers {
         }
     }
 
-    // TODO: need some kind of guard to make sure bytes isn't bigger than 32 bytes
     function getSlice(bytes memory data, uint256 intervalIndex) public pure returns (bytes32) {
         uint256 start = intervalIndex * 32;
 
