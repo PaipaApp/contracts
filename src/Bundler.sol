@@ -87,16 +87,8 @@ contract Bundler is IBundler, AccessControl, Pausable {
             revert ArgsMismatch();
 
         // @dev In order to override the current transactions
-        if (transactions.length > 0) {
-            // TODO: calling delete on a dynamic array in storage sets the array
-            // lenght to zero, but doesn't free the slots used by the array items
-            // so this is maybe a problem
-            // UNFOLD: as the array size is set to zero, we cannot access the element
-            // using the array index, it throws an index out of bounds.
-            // Although that might be safe enough, should test the scenarios where this
-            // can be exploited by using inline assembly
+        if (transactions.length > 0)
             delete transactions;
-        }
 
         for (uint256 i = 0; i < _transactions.length; i++) {
             Transaction memory transaction = _transactions[i];
