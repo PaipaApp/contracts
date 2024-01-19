@@ -26,16 +26,13 @@ import {Helpers} from "./libraries/Helpers.sol";
 import {IBundler} from "./interfaces/IBundler.sol";
 import {IFeeTokenRegistry} from "./interfaces/IFeeTokenRegistry.sol";
 
-// TODO: how reentrancy can affect execution
-// TODO: how to work with ERC721 and ERC1155 approvals
-// @dev this contract doesn't support ERC1155 transactions nor payable transactions
+// @dev this contract doesn't support payable transactions
 contract Bundler is IBundler, AccessControl, Pausable {
     using BitMaps for BitMaps.BitMap;
     using SafeERC20 for IERC20;
 
     bytes32 private constant BUNDLE_RUNNER = keccak256("BUNDLE_RUNNER");
 
-    // TODO: how to use only Bitmaps for this
     // @dev Transaction ID => BitMap
     mapping(uint256 => BitMaps.BitMap) private argsBitmap;
 
@@ -196,14 +193,6 @@ contract Bundler is IBundler, AccessControl, Pausable {
     function depositFeeToken(uint256 _amount) external {
         feeToken.transferFrom(msg.sender, address(this), _amount);
         emit FeeTokenDeposited(address(feeToken), _amount);
-    }
-
-    function withdrawERC20(address _token, uint256 _amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        IERC20(_token).safeTransfer(msg.sender, _amount);
-    }
-
-    function withdraw721(address _token, uint256 _tokenId) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        IERC721(_token).safeTransferFrom(address(this), msg.sender, _tokenId);
     }
 
     function getRuns() external view returns (uint256) {
