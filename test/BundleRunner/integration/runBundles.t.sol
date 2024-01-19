@@ -52,7 +52,6 @@ contract RunBundlesTest is CreateBundleFixture {
         assertEq(IBundler(user0Bundle).getRuns(), uint256(1));
     }
 
-    // TODO: add one more tx to bundle
     function test_RunMultipleBundles() public {
         IBundleRunner.BundleExecutionParams[] memory bundles = new IBundleRunner.BundleExecutionParams[](2);
         bundles[0] = IBundleRunner.BundleExecutionParams(
