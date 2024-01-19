@@ -25,11 +25,11 @@ import {AggregatorV3Interface} from "chainlink-brownie-contracts/contracts/src/v
 import {IFeeTokenRegistry} from './interfaces/IFeeTokenRegistry.sol';
 import "forge-std/console.sol";
 
-// TODO: transfer fees to a treasury
 contract BundleRunner is IBundleRunner, Ownable {
     using SafeERC20 for IERC20;
 
     IFeeTokenRegistry internal feeTokenRegistry;
+    address internal treasury;
     uint8 internal bundleLimitPerBlock;
 
     error DisallowedFeeToken(address feeToken);
@@ -38,9 +38,15 @@ contract BundleRunner is IBundleRunner, Ownable {
     error BundleTooBig();
     error FeeTooHigh(uint256 feeAmount, uint256 maxFeePerRun);
 
-    constructor(address _owner, IFeeTokenRegistry _feeTokenRegistry, uint8 _bundleLimitPerBlock) Ownable(_owner) {
+    constructor(
+        address _owner,
+        IFeeTokenRegistry _feeTokenRegistry,
+        uint8 _bundleLimitPerBlock,
+        address _treasury
+    ) Ownable(_owner) {
         feeTokenRegistry = _feeTokenRegistry;
         bundleLimitPerBlock =  _bundleLimitPerBlock;
+        treasury = _treasury;
     }
 
     // TODO: add protocol fee on top
@@ -58,7 +64,8 @@ contract BundleRunner is IBundleRunner, Ownable {
             if (price <= 0)
                 revert FeeTokenPriceCannotBeZero();
 
-            // @dev priceFeed returns the price in 8 decimals, price is multiplied by 1e10 in order to convert to 18 decimals
+            // @dev priceFeed returns the price in 8 decimals, price is multiplied 
+            // by 1e10 in order to convert to 18 decimals
             uint256 tokenAmount = _bundleExecutionParams[i].transactionCost * uint256(price * 1e10) / 1e18;
             uint256 maxFeePerRun = bundler.getMaxFeePerRun();
 
@@ -67,7 +74,7 @@ contract BundleRunner is IBundleRunner, Ownable {
 
             bundler.getFeeToken().safeTransferFrom(
                 address(bundler),
-                address(this),
+                treasury,
                 tokenAmount
             );
             bundler.runBundle();
@@ -76,5 +83,9 @@ contract BundleRunner is IBundleRunner, Ownable {
 
     function getBundleLimitPerBlock() external view returns (uint8) {
         return bundleLimitPerBlock;
+    }
+
+    function getTreasury() external view returns (address) {
+        return treasury;
     }
 }

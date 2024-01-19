@@ -7,8 +7,9 @@ import {BundleRunner} from "../../../src/BundleRunner.sol";
 import {IBundleRunner} from "../../../src/interfaces/IBundleRunner.sol";
 import {IBundler} from "../../../src/interfaces/IBundler.sol";
 
-// Given the owner of the contract
+//  Given the owner of the contract
 //      When runBundles is called
+//          Then fees are transferred to treasury 
 //      And execution fee is higher than maxFeePerRun
 //         Then revert with FeeTooHigh error
 contract RunBundlesTest is CreateBundleFixture {
@@ -73,7 +74,8 @@ contract RunBundlesTest is CreateBundleFixture {
     }
 
     function test_SendFeesToTreasury() public {
-        uint treasurBalanceBefore = mockToken.balanceOf(address(runner));
+        address treasury = runner.getTreasury(); 
+        uint treasurBalanceBefore = mockToken.balanceOf(treasury);
         IBundleRunner.BundleExecutionParams[] memory bundles = new IBundleRunner.BundleExecutionParams[](1);
 
         bundles[0] = IBundleRunner.BundleExecutionParams(
@@ -85,7 +87,7 @@ contract RunBundlesTest is CreateBundleFixture {
         vm.prank(runnerOwner);
         runner.runBundles(bundles);
 
-        uint treasuryBalanceDelta = mockToken.balanceOf(address(runner)) - treasurBalanceBefore;
+        uint treasuryBalanceDelta = mockToken.balanceOf(treasury) - treasurBalanceBefore;
         uint expectedTokenBalance = 2e18;
 
         assertEq(treasuryBalanceDelta, expectedTokenBalance);
