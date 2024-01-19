@@ -244,10 +244,6 @@ contract Bundler is IBundler, AccessControl, Pausable {
         _pause();
     }
 
-    function isPaused() external view returns (bool) {
-        return paused();
-    }
-
     function resumeRuns() external onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
     }
