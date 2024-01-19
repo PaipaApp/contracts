@@ -2,17 +2,19 @@
 pragma solidity ^0.8.22;
 
 import "forge-std/console.sol";
+import {Pausable} from "openzeppelin-contracts/contracts/utils/Pausable.sol";
 import {BundleFixture} from "../../fixtures/BundleFixture.sol";
 import {Bundler} from "../../../src/Bundler.sol";
 
-// TODO: whenNotPaused
 // Given the owner of the contract
 //      When the account calls runBundle
-//      And the time ellapse is less than executionInterval
-//          Then the transaction reverts with ExecutionBeforeInterval
-//      And the time ellapse is greater than executionInterval
-//          Then the transaction succeeds
-//      Then increments the runs counter
+//          And the time ellapse is less than executionInterval
+//              Then the transaction reverts with ExecutionBeforeInterval
+//          And the time ellapse is greater than executionInterval
+//              Then the transaction succeeds
+//          And contract is paused
+//              Then the transaction reverts with Paused
+//          Then increments the runs counter
 // Given an account with the role BUNDLE_RUNNER
 //      When the account calls runBundle
 //          Then the transaction succeeds
@@ -43,6 +45,10 @@ contract RunBundleUnit is BundleFixture {
     }
 
     modifier andTimeEllapseIsLessThanExecutionInterval() {
+        _;
+    }
+    
+    modifier andContractIsPaused() {
         _;
     }
 
@@ -98,6 +104,21 @@ contract RunBundleUnit is BundleFixture {
         vm.stopPrank();
     }
 
+    function test_RevertsWithPaused() 
+        givenOwner
+        whenTheAccountCallsRunBundle 
+        andContractIsPaused 
+        public
+    {
+        vm.startPrank(user0); {
+            bundler.pauseRuns();
+
+            vm.expectRevert(Pausable.EnforcedPause.selector);
+            bundler.runBundle();
+        }
+        vm.stopPrank();
+    }
+
     function test_IncrementRuns() givenOwner whenTheAccountCallsRunBundle public {
         vm.prank(user0);
         bundler.runBundle();
@@ -105,5 +126,5 @@ contract RunBundleUnit is BundleFixture {
         assertEq(bundler.getRuns(), 1);
     }
 
-    // TODO: use vm.expectCall to test if all the contracts are called
+    // TODO: use vm.expectCall to test if all the contracts are called => this is an integration test
 }

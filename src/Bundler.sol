@@ -240,6 +240,18 @@ contract Bundler is IBundler, AccessControl, Pausable {
         feeToken = IERC20(_feeToken);
     }
 
+    function pauseRuns() external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _pause();
+    }
+
+    function isPaused() external view returns (bool) {
+        return paused();
+    }
+
+    function resumeRuns() external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _unpause();
+    }
+
     function getFeeToken() external view returns (IERC20) {
         return feeToken;
     }
