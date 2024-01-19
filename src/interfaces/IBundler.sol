@@ -34,10 +34,6 @@ interface IBundler {
 
     function setExecutionInterval(uint256 _executionInterval) external;
 
-    function withdrawERC20(address _token, uint256 _amount) external;
-
-    function withdraw721(address _token, uint256 _tokenId) external;
-
     function getRuns() external view returns (uint256);
 
     function approveBundleRunner(address _runner) external;
