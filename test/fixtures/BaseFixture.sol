@@ -21,6 +21,7 @@ abstract contract BaseFixture is Test {
     address public user0;
     address public user1;
     address public runnerOwner;
+    address public bundleRunnerTreasury;
     address public factoryOwner;
     address public feeRegistryOwner;
 
@@ -41,6 +42,7 @@ abstract contract BaseFixture is Test {
         runnerOwner = address(3);
         factoryOwner = address(4);
         feeRegistryOwner = address(5);
+        bundleRunnerTreasury = address(6);
 
         mock0 = new MockContract0();
         mock1 = new MockContract1();
@@ -62,7 +64,7 @@ abstract contract BaseFixture is Test {
         );
         bundler = new Bundler(user0, 0, address(mockToken),  feeTokenRegistry);
         factory = new BundlerFactory(factoryOwner, feeTokenRegistry);
-        runner = new BundleRunner(runnerOwner, feeTokenRegistry, 10);
+        runner = new BundleRunner(runnerOwner, feeTokenRegistry, 10, bundleRunnerTreasury);
 
         mockToken.transfer(user0, 1000e18);
         mockToken.transfer(user1, 1000e18);
