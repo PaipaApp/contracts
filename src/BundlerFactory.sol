@@ -25,6 +25,8 @@ contract BundlerFactory is IBundlerFactory, Ownable {
     IFeeTokenRegistry internal feeTokenRegistry;
     mapping(address => address[]) internal userBundlers;
 
+    error BundlerDoesNotExist(address user, uint256 bundlerId);
+
     constructor(address _owner, IFeeTokenRegistry _feeTokenRegistry) Ownable(_owner) {
         feeTokenRegistry = _feeTokenRegistry;
     }
@@ -44,8 +46,14 @@ contract BundlerFactory is IBundlerFactory, Ownable {
         return userBundlers[_user];
     }
 
+    // TODO: fix test
     function getBundler(address _user, uint256 _bundlerId) external view returns (address) {
-        return userBundlers[_user][_bundlerId];
+        address[] memory bundlers = userBundlers[_user];
+
+        if (_bundlerId >= bundlers.length)
+            revert BundlerDoesNotExist(_user, _bundlerId);
+
+        return bundlers[_bundlerId];
     }
 
     function getUserBundlersLength(address _user) external view returns (uint256) {
